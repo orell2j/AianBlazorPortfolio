@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AianBlazorPortfolio", "AianBlazorPortfolio\AianBlazorPortfolio\AianBlazorPortfolio.csproj", "{B148F273-C657-4918-B81C-1B7E5BBEDEB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AianBlazorPortfolio.Client", "AianBlazorPortfolio\AianBlazorPortfolio.Client\AianBlazorPortfolio.Client.csproj", "{E6DCF862-266B-495E-A10B-B03BEA754134}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B148F273-C657-4918-B81C-1B7E5BBEDEB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B148F273-C657-4918-B81C-1B7E5BBEDEB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B148F273-C657-4918-B81C-1B7E5BBEDEB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B148F273-C657-4918-B81C-1B7E5BBEDEB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6DCF862-266B-495E-A10B-B03BEA754134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6DCF862-266B-495E-A10B-B03BEA754134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6DCF862-266B-495E-A10B-B03BEA754134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6DCF862-266B-495E-A10B-B03BEA754134}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
