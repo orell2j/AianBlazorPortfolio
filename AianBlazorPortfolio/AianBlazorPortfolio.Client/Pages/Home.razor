@@ -1,0 +1,343 @@
+﻿@page "/"
+@using AianBlazorPortfolio.Client.Shared
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+<main class="portfolio">
+    <!-- CV Section (always visible) -->
+    <section class="cv-section" id="home">
+        <h2 class="cv-title">DOWNLOAD MY CV</h2>
+        <div class="cv-container">
+            <article class="cv-card">
+                <h3 class="cv-card-title">My CV in French</h3>
+                <div class="cv-actions">
+                    <!-- For French CV, View opens in a new tab -->
+                    <button class="cv-btn" @onclick='() => OpenCVViewer("files/CV Aian Batoochirov FR.pdf")'>View</button>
+                    <a href="files/CV Aian Batoochirov FR.pdf" download class="cv-btn">Download</a>
+                </div>
+            </article>
+            <article class="cv-card">
+                <h3 class="cv-card-title">My CV in English</h3>
+                <div class="cv-actions">
+                    <!-- For English CV, View opens a modal overlay -->
+                    <button class="cv-btn" @onclick='() => OpenCVViewer("files/CV Aian Batoochirov EN.pdf")'>View</button>
+                    <a href="files/CV Aian Batoochirov EN.pdf" download class="cv-btn">Download</a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+
+    <!-- About Section (collapsible) -->
+    <section id="about" class="about-section">
+        <header class="section-header">
+            <h2 class="section-title">About Me</h2>
+            <!-- Single toggle button -->
+            <button class="toggle-button" @onclick="ToggleAbout">
+                <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
+                     style="transform: rotate(@(isAboutOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
+                    <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
+                </svg>
+            </button>
+
+        </header>
+        @if (isAboutOpen)
+        {
+            <div class="about-content">
+                <article class="about-text">
+                    <h3 class="about-heading">Hi, My Name is Aian</h3>
+                    <!-- Additional details go here -->
+                </article>
+                <aside class="about-image">
+                    <!-- Optional image content -->
+                </aside>
+            </div>
+        }
+    </section>
+
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="reviews-section">
+        <header class="section-header">
+            <h2 class="section-title">Testimonials</h2>
+        </header>
+        <div class="overall-rating">
+            <h3>Average Rating: @OverallRating.ToString("0.0")/5</h3>
+            <StarRatingDisplay Rating="@OverallRating" />
+        </div>
+        <div class="reviews-slider-container">
+            <!-- Left Button -->
+            <button class="slider-button left" @onclick='() => JS.InvokeVoidAsync("carouselPrev")'></button>
+
+            <!-- Testimonial Container -->
+            <div class="reviews-container-wrapper">
+                <div class="reviews-container" id="testimonialContainer">
+                    @if (displayedTestimonials != null && displayedTestimonials.Any())
+                    {
+                        foreach (var t in displayedTestimonials)
+                        {
+                            <article class="review-card">
+                                <h3 class="reviewer-name">@t.Name</h3>
+                                <div class="rating-stars">
+                                    <StarRatingDisplay Rating="@t.Rating" />
+                                </div>
+                                <p class="review-text">@t.Comment</p>
+                                <small>@t.SubmittedOn.ToString("g")</small>
+                            </article>
+                        }
+                    }
+                    else
+                    {
+                        <p>No testimonials available.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Right Button -->
+            <button class="slider-button right" @onclick='() => JS.InvokeVoidAsync("carouselNext")'></button>
+        </div>
+    </section>
+
+
+
+
+
+    <!-- Works Section (collapsible) -->
+    <section id="works" class="works-section">
+        <header class="section-header">
+            <h2 class="section-title">My Works</h2>
+            <button class="toggle-button" @onclick="ToggleWorks">
+                <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
+                     style="transform: rotate(@(isWorksOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
+                    <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
+                </svg>
+            </button>
+
+        </header>
+        @if (isWorksOpen)
+        {
+            <article class="project-card">
+                <header class="project-header">
+                    <h3 class="project-title">Champlain Pet Clinic</h3>
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff960474bf0324efb51c708e056e80307d88585fa70eace92cd0be7dad3fa11b"
+                         alt="Project Icon" class="project-icon" loading="lazy">
+                </header>
+                <p class="project-description">
+                    github link<br>
+                    what features I've done<br>
+                    what I learned<br>
+                    how much time I worked on it
+                </p>
+            </article>
+            <article class="project-card">
+                <header class="project-header">
+                    <h3 class="project-title">Compte Express</h3>
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff960474bf0324efb51c708e056e80307d88585fa70eace92cd0be7dad3fa11b"
+                         alt="Project Icon" class="project-icon" loading="lazy">
+                </header>
+                <p class="project-description">
+                    github link<br>
+                    what features I've done<br>
+                    what I learned<br>
+                    how much time I worked on it
+                </p>
+            </article>
+            <div class="other-projects">
+                <h3>Other Projects</h3>
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bcb0c9b96d3637eb106109b40b488f85762bea2dd083a869a7b3a7569ec7207a"
+                     alt="Other Projects Icon" class="project-icon" loading="lazy">
+            </div>
+        }
+    </section>
+
+    <!-- Skills Section (collapsible) -->
+    <section id="skills" class="skills-section">
+        <header class="section-header">
+            <h2 class="section-title">My Skills</h2>
+            <button class="toggle-button" @onclick="ToggleSkills">
+                <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
+                     style="transform: rotate(@(isSkillsOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
+                    <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
+                </svg>
+            </button>
+
+        </header>
+        @if (isSkillsOpen)
+        {
+            <div class="skills-content">
+                <!-- Your skills details here -->
+                <div class="skills-list">
+                    <h3>Proficiency in :</h3>
+                    <ul>
+                        <li>Python</li>
+                        <li>Java / Springboot</li>
+                        <li>Agile / Scrum</li>
+                        <li>Github / Git</li>
+                        <li>Jira</li>
+                        <li>Rest API</li>
+                        <li>Angular/ Typescript</li>
+                        <li>Micro Services</li>
+                        <li>Linux</li>
+                        <li>HTML / CSS</li>
+                        <li>SQL / Databases</li>
+                        <li>Teamwork</li>
+                        <li>Problem Solver</li>
+                    </ul>
+                </div>
+
+                <div class="skills-list">
+                    <h3>Knowledge of :</h3>
+                    <ul>
+                        <li>IoT</li>
+                        <li>JavaScript / React</li>
+                        <li>PHP / Laravel</li>
+                        <li>C++</li>
+                        <li>C#</li>
+                        <li>Machine Learning</li>
+                        <li>Mobile Development</li>
+                        <li>AI</li>
+                        <li>Deep Learning</li>
+                        <li>Kotlin</li>
+                        <li>Swift</li>
+                        <li>Flask</li>
+                    </ul>
+                </div>
+            </div>
+        }
+    </section>
+
+    <!-- Contact Section (collapsible) -->
+    <section id="contact" class="contact-section">
+        <header class="section-header">
+            <h2 class="section-title">Contact Me</h2>
+            <button class="toggle-button" @onclick="ToggleContact">
+                <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
+                     style="transform: rotate(@(isContactOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
+                    <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
+                </svg>
+            </button>
+
+        </header>
+        @if (isContactOpen)
+        {
+            <div class="contact-details">
+                <p class="contact-info">Phone Number: 1(438) 528 3019</p>
+                <p class="contact-info">Email: aianbat50@gmail.com</p>
+                <div class="social-links">
+                    <!-- Social links here -->
+                </div>
+            </div>
+        }
+    </section>
+</main>
+
+
+
+@if (isCVViewerOpen)
+{
+    <div class="cv-viewer-overlay">
+        <div class="cv-viewer-container">
+            <button class="close-btn" @onclick="CloseCVViewer">Close</button>
+            <iframe src="@currentCVUrl"></iframe>
+        </div>
+    </div>
+}
+
+@code {
+    // Collapsible sections state and CV viewer state
+    private bool isAboutOpen = false;
+    private bool isWorksOpen = false;
+    private bool isSkillsOpen = false;
+    private bool isContactOpen = false;
+    private bool isCVViewerOpen = false;
+    private string currentCVUrl;
+
+    // Example testimonial data
+    private List<Testimonial> displayedTestimonials = new List<Testimonial>
+  {
+      new Testimonial { Id = 1, Name = "John Doe", Comment = "Great portfolio!", Rating = 5, SubmittedOn = DateTime.Now.AddDays(-10) },
+      new Testimonial { Id = 2, Name = "Jane Smith", Comment = "Very professional work.", Rating = 4.5, SubmittedOn = DateTime.Now.AddDays(-9) },
+      new Testimonial { Id = 3, Name = "Alex Johnson", Comment = "Excellent design!", Rating = 4, SubmittedOn = DateTime.Now.AddDays(-8) },
+      new Testimonial { Id = 4, Name = "Emily Davis", Comment = "Impressive work.", Rating = 4.5, SubmittedOn = DateTime.Now.AddDays(-7) },
+      new Testimonial { Id = 5, Name = "Michael Brown", Comment = "Really liked it!", Rating = 5, SubmittedOn = DateTime.Now.AddDays(-6) },
+      new Testimonial { Id = 6, Name = "Sarah Wilson", Comment = "Could be better.", Rating = 3.5, SubmittedOn = DateTime.Now.AddDays(-5) },
+      new Testimonial { Id = 7, Name = "David Lee", Comment = "Outstanding effort!", Rating = 5, SubmittedOn = DateTime.Now.AddDays(-4) },
+      new Testimonial { Id = 8, Name = "Laura Martinez", Comment = "Very creative!", Rating = 4, SubmittedOn = DateTime.Now.AddDays(-3) },
+      new Testimonial { Id = 9, Name = "Chris Taylor", Comment = "Amazing results!", Rating = 5, SubmittedOn = DateTime.Now.AddDays(-2) },
+      new Testimonial { Id = 10, Name = "Olivia Harris", Comment = "Satisfying work.", Rating = 4.5, SubmittedOn = DateTime.Now.AddDays(-1) }
+  };
+
+    private Testimonial newTestimonial = new Testimonial();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initializeTestimonialCarousel");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFeaturedTestimonials();
+    }
+
+    private async Task LoadFeaturedTestimonials()
+    {
+        try
+        {
+            var testimonials = await Http.GetFromJsonAsync<List<Testimonial>>("api/testimonial/all");
+            if (testimonials != null && testimonials.Any())
+            {
+                displayedTestimonials = testimonials;
+            }
+        }
+        catch
+        {
+            // If backend fails, use the example data.
+        }
+    }
+
+    private async Task SubmitTestimonial()
+    {
+        newTestimonial.SubmittedOn = DateTime.Now;
+        var response = await Http.PostAsJsonAsync("api/testimonial/submit", newTestimonial);
+        if (response.IsSuccessStatusCode)
+        {
+            newTestimonial = new Testimonial();
+            await LoadFeaturedTestimonials();
+        }
+    }
+
+    private void UpdateRating(double r)
+    {
+        newTestimonial.Rating = r;
+    }
+
+    private void ToggleAbout() => isAboutOpen = !isAboutOpen;
+    private void ToggleWorks() => isWorksOpen = !isWorksOpen;
+    private void ToggleSkills() => isSkillsOpen = !isSkillsOpen;
+    private void ToggleContact() => isContactOpen = !isContactOpen;
+
+    private void OpenCVViewer(string url)
+    {
+        currentCVUrl = url.StartsWith("/") ? url : "/" + url;
+        isCVViewerOpen = true;
+    }
+
+    private void CloseCVViewer() => isCVViewerOpen = false;
+
+    public class Testimonial
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Comment { get; set; }
+        public DateTime SubmittedOn { get; set; }
+        public double Rating { get; set; }
+    }
+
+    private double OverallRating =>
+      (displayedTestimonials != null && displayedTestimonials.Any())
+        ? displayedTestimonials.Average(t => t.Rating)
+        : 0;
+}

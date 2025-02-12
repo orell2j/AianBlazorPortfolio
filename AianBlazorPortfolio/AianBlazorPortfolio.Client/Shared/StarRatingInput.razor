@@ -1,0 +1,29 @@
+﻿<div class="star-rating-input">
+    @for (double r = 0.5; r <= 5; r += 0.5)
+    {
+        <button type="button" class="star-button" @onclick="() => SetRating(r)">
+            @if (r <= Rating)
+            {
+                <span class="star full">&#9733;</span>
+            }
+            else
+            {
+                <span class="star empty">&#9734;</span>
+            }
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public double Rating { get; set; }
+
+    [Parameter]
+    public EventCallback<double> RatingChanged { get; set; }
+
+    private void SetRating(double r)
+    {
+        Rating = r;
+        RatingChanged.InvokeAsync(r);
+    }
+}

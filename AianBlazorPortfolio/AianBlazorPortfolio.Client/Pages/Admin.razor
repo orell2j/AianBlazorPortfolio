@@ -1,0 +1,87 @@
+﻿@page "/admin"
+@inject HttpClient Http
+
+<section class="admin-section" style="padding:2rem;">
+    <h2>Admin Panel - Manage Testimonials</h2>
+    @if (allTestimonials == null)
+    {
+        <p>Loading testimonials...</p>
+    }
+    else if (!allTestimonials.Any())
+    {
+        <p>No testimonials available.</p>
+    }
+    else
+    {
+        foreach (var t in allTestimonials)
+        {
+            <div class="testimonial-card" style="border: 1px solid #ccc; padding:10px; margin-bottom:10px;">
+                <h4>@t.Name</h4>
+                <p>Rating: @t.Rating/5</p>
+                <p>@t.Comment</p>
+                <small>@t.SubmittedOn.ToString("g")</small>
+                <div class="mt-2">
+                    @if (!t.Approved)
+                    {
+                        <button class="btn btn-success me-2" @onclick="() => ApproveTestimonial(t.Id)">Approve</button>
+                        <button class="btn btn-danger" @onclick="() => RejectTestimonial(t.Id)">Reject</button>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success me-2">Approved</span>
+                        <label>
+                            <input type="checkbox" checked="@t.Featured" @onchange="(e) => ToggleFeatured(t.Id, e.Value)" />
+                            Show on Home
+                        </label>
+                    }
+                </div>
+            </div>
+        }
+    }
+</section>
+
+@code {
+    private List<Testimonial> allTestimonials;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAllTestimonials();
+    }
+
+    private async Task LoadAllTestimonials()
+    {
+        // Endpoint that returns all testimonials
+        allTestimonials = await Http.GetFromJsonAsync<List<Testimonial>>("api/testimonial/all");
+    }
+
+    private async Task ApproveTestimonial(int id)
+    {
+        await Http.PostAsync($"api/testimonial/approve/{id}", null);
+        await LoadAllTestimonials();
+    }
+
+    private async Task RejectTestimonial(int id)
+    {
+        await Http.PostAsync($"api/testimonial/reject/{id}", null);
+        await LoadAllTestimonials();
+    }
+
+    private async Task ToggleFeatured(int id, object value)
+    {
+        bool isFeatured = value is bool b && b;
+        var update = new { Featured = isFeatured };
+        await Http.PutAsJsonAsync($"api/testimonial/feature/{id}", update);
+        await LoadAllTestimonials();
+    }
+
+    public class Testimonial
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Comment { get; set; }
+        public DateTime SubmittedOn { get; set; }
+        public bool Approved { get; set; }
+        public bool Featured { get; set; }
+        public int Rating { get; set; }
+    }
+}

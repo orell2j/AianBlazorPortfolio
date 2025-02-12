@@ -1,0 +1,760 @@
+﻿/* Base */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background-color: #D9D9D9;
+    overflow-x: hidden;
+}
+
+/* Portfolio Container */
+.portfolio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Header */
+.main-header {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    color: #D9D9D9;
+    margin-bottom: 0; /* No bottom margin so nav touches header */
+}
+
+.header-background {
+    background-color: #202020;
+    height: 130px; /* scaled down */
+    box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+}
+
+.header-content {
+    position: absolute;
+    width: 100%;
+    top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 70px; /* scaled down */
+    margin: 0;
+}
+
+/* Navigation: now placed directly below header */
+.nav-container {
+    background-color: #202020;
+    box-shadow: 0 9px 4px rgba(0,0,0,0.25);
+    width: 96.5%;
+    padding: 20px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-radius: 0 0 50px 50px; /* rounded bottom corners */
+}
+
+.nav-list {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link {
+    background-color: #D9D9D9;
+    padding: 10px 20px;
+    font-size: 20px;
+    color: #000;
+    text-decoration: none;
+    border-radius: 90px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+    .nav-link:hover {
+        transform: scale(1.05);
+    }
+
+    .nav-link.active {
+        border: 3px solid #979797;
+        font-weight: 600;
+        padding: 12px 20px;
+    }
+
+.toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
+}
+
+.language-toggle {
+    width: 120px;
+    text-align: center;
+}
+
+    .language-toggle button {
+        min-width: 120px;
+        text-align: center;
+        background: #D9D9D9;
+        border: none;
+        border-radius: 90px;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+/* CV Section */
+.cv-viewer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cv-viewer-container {
+    position: relative;
+    width: 80%;
+    height: 80%;
+    background-color: #D9D9D9;
+    border-radius: 50px;
+    box-shadow: 0 9px 4px rgba(0, 0, 0, 0.25);
+}
+
+    .cv-viewer-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #D9D9D9;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 10;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
+}
+
+.cv-section {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.cv-title {
+    font-size: 30px;
+    color: #000;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.cv-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.cv-card {
+    background-color: #202020;
+    color: #D9D9D9;
+    border-radius: 50px;
+    padding: 20px;
+    flex: 1;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 9px 4px rgba(0,0,0,0.25);
+}
+
+.cv-card-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.cv-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.cv-btn {
+    background-color: #D9D9D9;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #000;
+    text-decoration: none;
+    border-radius: 90px;
+}
+
+/* Testimonials Section styling */
+.reviews-section {
+    background-color: #202020;
+    border-radius: 50px;
+    box-shadow: 0px 9px 4px rgba(0,0,0,0.25);
+    padding: 40px;
+    margin: 40px auto;
+    max-width: 1200px;
+    color: #D9D9D9;
+}
+
+/* Wrapping container to ensure full testimonials show */
+.reviews-container-wrapper {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+/* Container for testimonials */
+.reviews-container {
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+    scroll-behavior: smooth;
+    width: max-content;
+    justify-content: flex-start;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Each testimonial card */
+.review-card {
+    flex: 0 0 auto;
+    min-width: 300px;
+    max-width: 350px;
+    text-align: center;
+    padding: 20px;
+    background-color: #b3b3b3;
+    border-radius: 20px;
+    box-shadow: 0px 9px 4px rgba(0, 0, 0, 0.25);
+}
+
+    .review-card h3,
+    .review-card p,
+    .review-card small {
+        color: #202020; /* Darker text */
+        font-weight: 600;
+    }
+
+/* Buttons for left/right navigation */
+.slider-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15%; /* Keep large enough for easy clicks */
+    height: 100%;
+    background: transparent; /* Fully transparent */
+    border: none;
+    cursor: pointer;
+    z-index: 100;
+    opacity: 0; /* Completely invisible */
+}
+
+    .slider-button.left {
+        left: 0;
+    }
+
+    .slider-button.right {
+        right: 0;
+    }
+
+    /* Prevent accidental focus outline */
+    .slider-button:focus {
+        outline: none;
+    }
+
+
+/* Reviewer name and star rating */
+.reviewer-name {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.rating-stars {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin: 20px 0;
+}
+
+.star-icon {
+    width: 40px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Review text styling */
+.review-text {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 24px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 50px;
+    box-shadow: 0px 9px 4px rgba(0,0,0,0.25);
+    margin-top: 20px;
+}
+
+/* Overall rating display */
+.overall-rating {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .overall-rating h3 {
+        font-family: 'Be Vietnam Pro', sans-serif;
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+/* Testimonial Submission Section */
+.testimonial-submit {
+    background-color: #202020;
+    border-radius: 50px;
+    box-shadow: 0px 9px 4px rgba(0,0,0,0.25);
+    padding: 40px;
+    margin: 40px auto;
+    max-width: 1200px;
+    color: #D9D9D9;
+}
+
+    .testimonial-submit h2 {
+        font-family: 'Be Vietnam Pro', sans-serif;
+        font-size: 30px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+.comment-container {
+    background-color: #202020;
+    border-radius: 50px;
+    padding: 34px 65px;
+    box-shadow: 0px 9px 4px rgba(0,0,0,0.25);
+}
+
+.comment-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.leave-comment-text {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 30px;
+    margin: 0 0 0 10px;
+}
+
+.name-input {
+    width: 100%;
+    padding: 20px 35px;
+    font-size: 24px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    border-radius: 50px;
+    background-color: #fff;
+    box-shadow: 0px 9px 4px rgba(0,0,0,0.25);
+    border: none;
+    margin-top: 20px;
+}
+
+.rating-container {
+    text-align: center;
+}
+
+.rate-text {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 30px;
+    margin: 0;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 20px 32px;
+    font-size: 24px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    color: #202020;
+    border-radius: 50px;
+    background-color: #fff;
+    box-shadow: 0px 9px 4px rgba(0,0,0,0.25);
+    border: none;
+    resize: none;
+    margin-top: 20px;
+}
+
+/* --- Reviews (Testimonials) Section --- */
+.reviews-section {
+    position: relative;
+    background-color: #202020;
+    box-shadow: 0px 9px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 50px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 40px 20px;
+    color: #D9D9D9;
+}
+
+.overall-rating {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .overall-rating h3 {
+        font-family: 'Be Vietnam Pro', sans-serif;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+
+/* Star icons (for both display and input) */
+.star-icon {
+    width: 40px;
+    height: auto;
+    object-fit: contain;
+}
+
+    /* Hide default scrollbar if needed */
+    .reviews-container::-webkit-scrollbar {
+        display: none;
+    }
+
+/* --- Testimonial Submission Section --- */
+.testimonial-submit {
+    background-color: #202020;
+    border-radius: 50px;
+    box-shadow: 0px 9px 4px rgba(0,0,0,0.25);
+    width: 100%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 40px 20px;
+    color: #D9D9D9;
+    text-align: center;
+}
+
+/* Star rating display & input */
+.star {
+    font-size: 40px;
+    display: inline-block;
+    line-height: 1;
+}
+
+.star-rating-display .star-icon,
+.star-rating-input .star-icon {
+    width: 40px;
+    height: auto;
+}
+
+.star-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+
+    .star.full {
+        color: gold;
+    }
+
+    .star.empty {
+        color: grey;
+    }
+
+    .star.half {
+        position: relative;
+        color: grey; /* Base (empty) star */
+        display: inline-block;
+    }
+
+        .star.half::before {
+            content: "\2605"; /* Unicode full star */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            overflow: hidden;
+            color: gold;
+        }
+
+/* Section Headers */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 30px;
+    color: #D9D9D9;
+    margin: 0;
+}
+
+.section-icon {
+    width: 20px;
+    height: auto;
+}
+
+/* About Section */
+.about-section {
+    background-color: #202020;
+    border-radius: 50px;
+    box-shadow: 0 9px 4px rgba(0,0,0,0.25);
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.about-content {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.about-text {
+    background-color: #D9D9D9;
+    padding: 20px;
+    flex: 2;
+}
+
+.about-heading {
+    font-size: 20px;
+    margin: 0;
+    color: #000;
+}
+
+.about-image {
+    background-color: #D9D9D9;
+    width: 300px;
+    height: 400px;
+    flex: 1;
+}
+
+/* Works Section */
+.works-section {
+    background-color: #202020;
+    border-radius: 50px;
+    box-shadow: 0 9px 4px rgba(0,0,0,0.25);
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.project-card {
+    background-color: #D9D9D9;
+    border-radius: 30px;
+    margin: 20px 0;
+    padding: 20px;
+}
+
+.project-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.project-title {
+    font-size: 20px;
+    color: #000;
+    margin: 0;
+    flex: 1;
+}
+
+.project-icon {
+    width: 20px;
+    height: auto;
+}
+
+.project-description {
+    font-size: 16px;
+    color: #000;
+    margin-top: 10px;
+}
+
+/* Other Projects */
+.other-projects {
+    background-color: #D9D9D9;
+    border-radius: 30px;
+    box-shadow: 0 9px 4px rgba(0,0,0,0.25);
+    margin: 20px 0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.other-projects h3 {
+    font-size: 20px;
+    color: #000;
+    margin: 0;
+}
+
+/* Skills Section */
+.skills-section {
+    background-color: #202020;
+    border-radius: 50px;
+    box-shadow: 0 9px 4px rgba(0,0,0,0.25);
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.skills-content {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.skills-list {
+    font-size: 16px;
+    font-weight: 600;
+    color: #FFF;
+    flex: 1;
+    min-width: 250px;
+}
+
+    .skills-list h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .skills-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .skills-list li {
+        margin-top: 5px;
+    }
+
+/* Contact Section */
+.contact-section {
+    background-color: #202020;
+    border-radius: 50px;
+    box-shadow: 0 9px 4px rgba(0,0,0,0.25);
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.contact-info {
+    font-size: 16px;
+    color: #FFF;
+    margin: 20px 0;
+}
+
+.social-links {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.social-link {
+    background-color: #D9D9D9;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    display: block;
+}
+
+/* Footer */
+.main-footer {
+    background-color: #202020;
+    box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+    width: 100%;
+    padding: 30px 0;
+    text-align: center;
+    overflow-x: hidden;
+}
+
+.footer-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+    .footer-content .contact-info {
+        font-size: 12px;
+        margin: 10px 0;
+    }
+
+    .footer-content .social-links {
+        margin: 10px 0;
+    }
+
+    .footer-content .social-link {
+        width: 40px;
+        height: 40px;
+        border-radius: 15px;
+    }
+
+    @media (max-width: 900px) {
+  .header-title {
+    font-size: 60px;
+  }
+  .nav-container {
+    width: 93%;
+  }
+  .nav-link {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+  .cv-title, .section-title {
+    font-size: 24px;
+  }
+  .cv-card, .project-card, .about-text, .about-image {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .language-toggle {
+    margin-right: 5px;
+  }
+
+  .language-toggle button {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  /* Adjust other elements as needed */
+}

@@ -1,0 +1,14 @@
+﻿@code {
+    private string currentLanguage = "EN";
+
+    private void ToggleLanguage()
+    {
+        currentLanguage = (currentLanguage == "EN") ? "FR" : "EN";
+    }
+}
+
+<div class="language-toggle">
+    <button class="btn btn-secondary" @onclick="ToggleLanguage">
+        @((currentLanguage == "EN") ? "Français" : "English")
+    </button>
+</div>

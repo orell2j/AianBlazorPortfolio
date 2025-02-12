@@ -1,33 +1,47 @@
-using AianBlazorPortfolio.Client.Pages;
-using AianBlazorPortfolio.Components;
+using AianBlazorPortfolio.Components.Data;
+using AianBlazorPortfolio.Components.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer; // Add this if needed
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveWebAssemblyComponents();
+// Add services for API endpoints and controllers.
+builder.Services.AddControllers();
+
+// Optionally, add additional services
+builder.Services.AddSingleton<EmailService>();      // Your email service implementation
+builder.Services.AddSingleton<TestimonialService>();  // Service to store/manage testimonials
+
+// Register the DbContext using SQL Server.
+builder.Services.AddDbContext<TestimonialDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure error handling and HTTPS.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseWebAssemblyDebugging();
 }
 else
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-app.UseAntiforgery();
+app.UseRouting();
 
-app.MapRazorComponents<App>()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(AianBlazorPortfolio.Client._Imports).Assembly);
+app.MapControllers();
+
+// Map Blazor WebAssembly endpoints (if hosting client assets here).
+app.MapFallbackToFile("index.html");
 
 app.Run();
