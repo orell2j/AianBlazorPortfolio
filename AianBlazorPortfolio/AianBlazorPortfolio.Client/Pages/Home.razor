@@ -1,55 +1,63 @@
 ﻿@page "/"
 @using AianBlazorPortfolio.Client.Shared
+@using AianBlazorPortfolio.Client.Shared.Models
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Home> Localizer
 @inject HttpClient Http
 @inject IJSRuntime JS
 
 <main class="portfolio">
-    <!-- CV Section (always visible) -->
+    <!-- CV Section -->
     <section class="cv-section" id="home">
-        <h2 class="cv-title">DOWNLOAD MY CV</h2>
+        <h2 class="cv-title">
+            @(currentLanguage == "EN" ? "DOWNLOAD MY CV" : "TÉLÉCHARGEZ MON CV")
+        </h2>
         <div class="cv-container">
-            <article class="cv-card">
-                <h3 class="cv-card-title">My CV in French</h3>
-                <div class="cv-actions">
-                    <!-- For French CV, View opens in a new tab -->
-                    <button class="cv-btn" @onclick='() => OpenCVViewer("files/CV Aian Batoochirov FR.pdf")'>View</button>
-                    <a href="files/CV Aian Batoochirov FR.pdf" download class="cv-btn">Download</a>
-                </div>
-            </article>
-            <article class="cv-card">
-                <h3 class="cv-card-title">My CV in English</h3>
-                <div class="cv-actions">
-                    <!-- For English CV, View opens a modal overlay -->
-                    <button class="cv-btn" @onclick='() => OpenCVViewer("files/CV Aian Batoochirov EN.pdf")'>View</button>
-                    <a href="files/CV Aian Batoochirov EN.pdf" download class="cv-btn">Download</a>
-                </div>
-            </article>
+            @if (currentLanguage == "FR")
+            {
+                <article class="cv-card">
+                    <h3 class="cv-card-title">Mon CV en Français</h3>
+                    <div class="cv-actions">
+                        <button class="cv-btn" @onclick='() => OpenCVViewer(siteContent.CVFileFrenchUrl)'>Voir</button>
+                        <a href="@siteContent.CVFileFrenchUrl" download class="cv-btn">Télécharger</a>
+                    </div>
+                </article>
+            }
+            else
+            {
+                <article class="cv-card">
+                    <h3 class="cv-card-title">My CV in English</h3>
+                    <div class="cv-actions">
+                        <button class="cv-btn" @onclick='() => OpenCVViewer(siteContent.CVFileEnglishUrl)'>View</button>
+                        <a href="@siteContent.CVFileEnglishUrl" download class="cv-btn">Download</a>
+                    </div>
+                </article>
+            }
         </div>
     </section>
 
 
-    <!-- About Section (collapsible) -->
+    <!-- About Section -->
     <section id="about" class="about-section">
         <header class="section-header">
-            <h2 class="section-title">About Me</h2>
-            <!-- Single toggle button -->
+            <h2 class="section-title">
+                @(currentLanguage == "EN" ? "About Me" : "À propos de moi")
+            </h2>
             <button class="toggle-button" @onclick="ToggleAbout">
                 <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
                      style="transform: rotate(@(isAboutOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
                     <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
                 </svg>
             </button>
-
         </header>
         @if (isAboutOpen)
         {
             <div class="about-content">
                 <article class="about-text">
-                    <h3 class="about-heading">Hi, My Name is Aian</h3>
-                    <!-- Additional details go here -->
+                    @((MarkupString)siteContent.AboutText)
                 </article>
                 <aside class="about-image">
-                    <!-- Optional image content -->
+                    <img src="@siteContent.AboutImageUrl" alt="About image" style="max-width: 100%;" />
                 </aside>
             </div>
         }
@@ -59,22 +67,25 @@
     <!-- Testimonials Section -->
     <section id="testimonials" class="reviews-section">
         <header class="section-header">
-            <h2 class="section-title">Testimonials</h2>
+            <h2 class="section-title">
+                @(currentLanguage == "EN" ? "Testimonials" : "Témoignages")
+            </h2>
         </header>
         <div class="overall-rating">
-            <h3>Average Rating: @OverallRating.ToString("0.0")/5</h3>
+            <h3>
+                @(currentLanguage == "EN" ? "Average Rating:" : "Note moyenne:") @OverallRating.ToString("0.0")/5
+            </h3>
             <StarRatingDisplay Rating="@OverallRating" />
         </div>
-        <div class="reviews-slider-container">
+        <div class="reviews-slider-container" style="position: relative;">
             <!-- Left Button -->
             <button class="slider-button left" @onclick='() => JS.InvokeVoidAsync("carouselPrev")'></button>
-
             <!-- Testimonial Container -->
             <div class="reviews-container-wrapper">
                 <div class="reviews-container" id="testimonialContainer">
                     @if (displayedTestimonials != null && displayedTestimonials.Any())
                     {
-                        foreach (var t in displayedTestimonials)
+                        @foreach (var t in displayedTestimonials)
                         {
                             <article class="review-card">
                                 <h3 class="reviewer-name">@t.Name</h3>
@@ -88,11 +99,12 @@
                     }
                     else
                     {
-                        <p>No testimonials available.</p>
+                        <p style="color: red; font-weight: bold;">
+                            @(currentLanguage == "EN" ? "No testimonials available. Try refreshing." : "Aucun témoignage disponible. Veuillez actualiser.")
+                        </p>
                     }
                 </div>
             </div>
-
             <!-- Right Button -->
             <button class="slider-button right" @onclick='() => JS.InvokeVoidAsync("carouselNext")'></button>
         </div>
@@ -100,132 +112,98 @@
 
 
 
+    <!-- Testimonial Submission Section -->
+    <section class="testimonial-submit">
+        <h2 class="section-title">
+            @(currentLanguage == "EN" ? "Leave a Comment" : "Laissez un commentaire")
+        </h2>
+        <EditForm Model="newTestimonial" OnValidSubmit="SubmitTestimonial" class="testimonial-form">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="testimonial-left">
+                <InputText class="form-control" @bind-Value="newTestimonial.Name" placeholder="@(currentLanguage == "EN" ? "Type your name" : "Tapez votre nom")" />
+                <InputTextArea class="form-control comment-box" @bind-Value="newTestimonial.Comment" placeholder="@(currentLanguage == "EN" ? "Write a description" : "Écrivez une description")" />
+            </div>
+            <div class="testimonial-right">
+                <div class="rating-container">
+                    <label class="rate-text">
+                        @(currentLanguage == "EN" ? "Rate:" : "Note:")
+                    </label>
+                    <StarRatingInput Rating="@newTestimonial.Rating" RatingChanged="UpdateRating" />
+                </div>
+                <button type="submit" class="submit-button">
+                    @(currentLanguage == "EN" ? "Submit" : "Envoyer")
+                </button>
+            </div>
+        </EditForm>
+    </section>
 
 
-    <!-- Works Section (collapsible) -->
+    <!-- Works Section -->
     <section id="works" class="works-section">
         <header class="section-header">
-            <h2 class="section-title">My Works</h2>
+            <h2 class="section-title">
+                @(currentLanguage == "EN" ? "My Works" : "Mes réalisations")
+            </h2>
             <button class="toggle-button" @onclick="ToggleWorks">
                 <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
                      style="transform: rotate(@(isWorksOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
                     <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
                 </svg>
             </button>
-
         </header>
         @if (isWorksOpen)
         {
             <article class="project-card">
-                <header class="project-header">
-                    <h3 class="project-title">Champlain Pet Clinic</h3>
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff960474bf0324efb51c708e056e80307d88585fa70eace92cd0be7dad3fa11b"
-                         alt="Project Icon" class="project-icon" loading="lazy">
-                </header>
-                <p class="project-description">
-                    github link<br>
-                    what features I've done<br>
-                    what I learned<br>
-                    how much time I worked on it
-                </p>
+                @((MarkupString)siteContent.WorksContent)
             </article>
-            <article class="project-card">
-                <header class="project-header">
-                    <h3 class="project-title">Compte Express</h3>
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/ff960474bf0324efb51c708e056e80307d88585fa70eace92cd0be7dad3fa11b"
-                         alt="Project Icon" class="project-icon" loading="lazy">
-                </header>
-                <p class="project-description">
-                    github link<br>
-                    what features I've done<br>
-                    what I learned<br>
-                    how much time I worked on it
-                </p>
-            </article>
-            <div class="other-projects">
-                <h3>Other Projects</h3>
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/bcb0c9b96d3637eb106109b40b488f85762bea2dd083a869a7b3a7569ec7207a"
-                     alt="Other Projects Icon" class="project-icon" loading="lazy">
-            </div>
         }
     </section>
 
-    <!-- Skills Section (collapsible) -->
+    <!-- Skills Section -->
     <section id="skills" class="skills-section">
         <header class="section-header">
-            <h2 class="section-title">My Skills</h2>
+            <h2 class="section-title">
+                @(currentLanguage == "EN" ? "My Skills" : "Mes compétences")
+            </h2>
             <button class="toggle-button" @onclick="ToggleSkills">
                 <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
                      style="transform: rotate(@(isSkillsOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
                     <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
                 </svg>
             </button>
-
         </header>
         @if (isSkillsOpen)
         {
             <div class="skills-content">
-                <!-- Your skills details here -->
-                <div class="skills-list">
-                    <h3>Proficiency in :</h3>
-                    <ul>
-                        <li>Python</li>
-                        <li>Java / Springboot</li>
-                        <li>Agile / Scrum</li>
-                        <li>Github / Git</li>
-                        <li>Jira</li>
-                        <li>Rest API</li>
-                        <li>Angular/ Typescript</li>
-                        <li>Micro Services</li>
-                        <li>Linux</li>
-                        <li>HTML / CSS</li>
-                        <li>SQL / Databases</li>
-                        <li>Teamwork</li>
-                        <li>Problem Solver</li>
-                    </ul>
-                </div>
-
-                <div class="skills-list">
-                    <h3>Knowledge of :</h3>
-                    <ul>
-                        <li>IoT</li>
-                        <li>JavaScript / React</li>
-                        <li>PHP / Laravel</li>
-                        <li>C++</li>
-                        <li>C#</li>
-                        <li>Machine Learning</li>
-                        <li>Mobile Development</li>
-                        <li>AI</li>
-                        <li>Deep Learning</li>
-                        <li>Kotlin</li>
-                        <li>Swift</li>
-                        <li>Flask</li>
-                    </ul>
-                </div>
+                @((MarkupString)siteContent.SkillsContent)
             </div>
         }
     </section>
 
-    <!-- Contact Section (collapsible) -->
+
+    <!-- Contact Section -->
     <section id="contact" class="contact-section">
         <header class="section-header">
-            <h2 class="section-title">Contact Me</h2>
+            <h2 class="section-title">
+                @(currentLanguage == "EN" ? "Contact Me" : "Contactez-moi")
+            </h2>
             <button class="toggle-button" @onclick="ToggleContact">
                 <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
                      style="transform: rotate(@(isContactOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
                     <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
                 </svg>
             </button>
-
         </header>
         @if (isContactOpen)
         {
             <div class="contact-details">
-                <p class="contact-info">Phone Number: 1(438) 528 3019</p>
-                <p class="contact-info">Email: aianbat50@gmail.com</p>
-                <div class="social-links">
-                    <!-- Social links here -->
-                </div>
+                <p class="contact-info">
+                    @(currentLanguage == "EN" ? "Phone: " : "Téléphone: ") @siteContent.ContactPhone
+                </p>
+                <p class="contact-info">
+                    @(currentLanguage == "EN" ? "Email: " : "Email: ") @siteContent.ContactEmail
+                </p>
             </div>
         }
     </section>
@@ -237,70 +215,71 @@
 {
     <div class="cv-viewer-overlay">
         <div class="cv-viewer-container">
-            <button class="close-btn" @onclick="CloseCVViewer">Close</button>
+            <button class="close-btn" @onclick="CloseCVViewer">
+                @(currentLanguage == "EN" ? "Close" : "Fermer")
+            </button>
             <iframe src="@currentCVUrl"></iframe>
         </div>
     </div>
 }
 
 @code {
-    // Collapsible sections state and CV viewer state
-    private bool isAboutOpen = false;
-    private bool isWorksOpen = false;
-    private bool isSkillsOpen = false;
-    private bool isContactOpen = false;
-    private bool isCVViewerOpen = false;
+    [CascadingParameter] public string currentLanguage { get; set; }
+    // Section toggles and state
+    private bool isAboutOpen, isWorksOpen, isSkillsOpen, isContactOpen, isCVViewerOpen;
     private string currentCVUrl;
 
-    // Example testimonial data
-    private List<Testimonial> displayedTestimonials = new List<Testimonial>
-  {
-      new Testimonial { Id = 1, Name = "John Doe", Comment = "Great portfolio!", Rating = 5, SubmittedOn = DateTime.Now.AddDays(-10) },
-      new Testimonial { Id = 2, Name = "Jane Smith", Comment = "Very professional work.", Rating = 4.5, SubmittedOn = DateTime.Now.AddDays(-9) },
-      new Testimonial { Id = 3, Name = "Alex Johnson", Comment = "Excellent design!", Rating = 4, SubmittedOn = DateTime.Now.AddDays(-8) },
-      new Testimonial { Id = 4, Name = "Emily Davis", Comment = "Impressive work.", Rating = 4.5, SubmittedOn = DateTime.Now.AddDays(-7) },
-      new Testimonial { Id = 5, Name = "Michael Brown", Comment = "Really liked it!", Rating = 5, SubmittedOn = DateTime.Now.AddDays(-6) },
-      new Testimonial { Id = 6, Name = "Sarah Wilson", Comment = "Could be better.", Rating = 3.5, SubmittedOn = DateTime.Now.AddDays(-5) },
-      new Testimonial { Id = 7, Name = "David Lee", Comment = "Outstanding effort!", Rating = 5, SubmittedOn = DateTime.Now.AddDays(-4) },
-      new Testimonial { Id = 8, Name = "Laura Martinez", Comment = "Very creative!", Rating = 4, SubmittedOn = DateTime.Now.AddDays(-3) },
-      new Testimonial { Id = 9, Name = "Chris Taylor", Comment = "Amazing results!", Rating = 5, SubmittedOn = DateTime.Now.AddDays(-2) },
-      new Testimonial { Id = 10, Name = "Olivia Harris", Comment = "Satisfying work.", Rating = 4.5, SubmittedOn = DateTime.Now.AddDays(-1) }
-  };
+    // Testimonials
+    private List<Testimonial> displayedTestimonials = new List<Testimonial>();
+    private Testimonial newTestimonial = new Testimonial { Rating = 0.0 };
 
-    private Testimonial newTestimonial = new Testimonial();
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("initializeTestimonialCarousel");
-        }
-    }
+    // Site content loaded from backend
+    private SiteContent siteContent = new SiteContent();
 
     protected override async Task OnInitializedAsync()
     {
         await LoadFeaturedTestimonials();
+        await LoadSiteContent();
     }
 
     private async Task LoadFeaturedTestimonials()
     {
         try
         {
-            var testimonials = await Http.GetFromJsonAsync<List<Testimonial>>("api/testimonial/all");
+            var testimonials = await Http.GetFromJsonAsync<List<Testimonial>>("api/testimonial/list");
             if (testimonials != null && testimonials.Any())
             {
                 displayedTestimonials = testimonials;
+                StateHasChanged();
+                Console.WriteLine($"Loaded {displayedTestimonials.Count} testimonials.");
+            }
+            else
+            {
+                Console.WriteLine("No approved testimonials found.");
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // If backend fails, use the example data.
+            Console.WriteLine($"Error fetching testimonials: {ex.Message}");
         }
+        await Task.Delay(200);
+        await JS.InvokeVoidAsync("initializeTestimonialCarousel");
+    }
+
+    private async Task LoadSiteContent()
+    {
+        try
+        {
+            siteContent = await Http.GetFromJsonAsync<SiteContent>("api/content");
+        }
+        catch { }
     }
 
     private async Task SubmitTestimonial()
     {
         newTestimonial.SubmittedOn = DateTime.Now;
+        newTestimonial.Approved = false;
+        newTestimonial.Featured = false;
         var response = await Http.PostAsJsonAsync("api/testimonial/submit", newTestimonial);
         if (response.IsSuccessStatusCode)
         {
@@ -309,22 +288,21 @@
         }
     }
 
-    private void UpdateRating(double r)
+    private async Task UpdateRating(double r)
     {
         newTestimonial.Rating = r;
+        await JS.InvokeVoidAsync("console.log", $"New rating selected: {r}");
     }
 
     private void ToggleAbout() => isAboutOpen = !isAboutOpen;
     private void ToggleWorks() => isWorksOpen = !isWorksOpen;
     private void ToggleSkills() => isSkillsOpen = !isSkillsOpen;
     private void ToggleContact() => isContactOpen = !isContactOpen;
-
     private void OpenCVViewer(string url)
     {
         currentCVUrl = url.StartsWith("/") ? url : "/" + url;
         isCVViewerOpen = true;
     }
-
     private void CloseCVViewer() => isCVViewerOpen = false;
 
     public class Testimonial
@@ -333,6 +311,8 @@
         public string Name { get; set; }
         public string Comment { get; set; }
         public DateTime SubmittedOn { get; set; }
+        public bool Approved { get; set; }
+        public bool Featured { get; set; }
         public double Rating { get; set; }
     }
 

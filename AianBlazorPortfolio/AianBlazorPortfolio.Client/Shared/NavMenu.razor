@@ -1,12 +1,30 @@
 ﻿<nav class="nav-container">
     <ul class="nav-list">
-        <li class="nav-item language-toggle">
-            <LanguageToggle />
+        <li class="nav-item">
+            <a class="nav-link" href="#home">@(CurrentLanguage == "EN" ? "Home" : "Accueil")</a>
         </li>
-        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#about">About Me</a></li>
-        <li class="nav-item"><a class="nav-link" href="#works">Works</a></li>
-        <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
-        <li class="nav-item"><a class="nav-link" href="#contact">Contact Me</a></li>
+        <li class="nav-item">
+            <a class="nav-link" href="#about">@(CurrentLanguage == "EN" ? "About Me" : "À Propos")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#works">@(CurrentLanguage == "EN" ? "Works" : "Projets")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#skills">@(CurrentLanguage == "EN" ? "Skills" : "Compétences")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#contact">@(CurrentLanguage == "EN" ? "Contact Me" : "Contactez-moi")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/admin">Admin</a>
+        </li>
+        <li class="nav-item language-toggle">
+            <LanguageToggle CurrentLanguage="@CurrentLanguage" ToggleLanguage="@ToggleLanguage" />
+        </li>
     </ul>
 </nav>
+
+@code {
+    [Parameter] public string CurrentLanguage { get; set; }
+    [Parameter] public EventCallback ToggleLanguage { get; set; }
+}

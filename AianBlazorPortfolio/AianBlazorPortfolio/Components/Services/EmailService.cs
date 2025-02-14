@@ -1,4 +1,4 @@
-﻿using AianBlazorPortfolio.Controllers;
+﻿using AianBlazorPortfolio.Components.Controller;
 
 namespace AianBlazorPortfolio.Components.Services
 {

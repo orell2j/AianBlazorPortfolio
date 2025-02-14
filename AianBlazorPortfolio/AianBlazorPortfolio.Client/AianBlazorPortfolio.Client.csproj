@@ -1,15 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
-    <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
-	<RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+		<StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
+		<RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+		<BlazorWebAssemblyPreserveCompilationContext>false</BlazorWebAssemblyPreserveCompilationContext>
+		<PublishTrimmed>false</PublishTrimmed>
+		<ExcludeFilesFromSingleFile>**\*.pdb</ExcludeFilesFromSingleFile>
+		<DebugSymbols>false</DebugSymbols>
+		<DebugType>none</DebugType>
+		<BlazorWebAssemblyGenerateDebugSymbols>false</BlazorWebAssemblyGenerateDebugSymbols>
+		<RootElementName>AianBlazorPortfolio.Client</RootElementName>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<BlazorWebAssemblyLoadAllGlobalizationData>false</BlazorWebAssemblyLoadAllGlobalizationData>
+		<BlazorWebAssemblyEnableIntegrityCheck>false</BlazorWebAssemblyEnableIntegrityCheck>
+	</PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
     <Content Remove="Pages\AboutMe.razor" />
   </ItemGroup>
 
@@ -21,6 +31,7 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
+	<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.12" />
   </ItemGroup>
 
   <ItemGroup>

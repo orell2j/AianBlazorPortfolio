@@ -1,79 +1,175 @@
 ﻿@page "/admin"
+@using AianBlazorPortfolio.Client.Shared.Models
 @inject HttpClient Http
 
-<section class="admin-section" style="padding:2rem;">
-    <h2>Admin Panel - Manage Testimonials</h2>
-    @if (allTestimonials == null)
-    {
-        <p>Loading testimonials...</p>
-    }
-    else if (!allTestimonials.Any())
-    {
-        <p>No testimonials available.</p>
-    }
-    else
-    {
-        foreach (var t in allTestimonials)
-        {
-            <div class="testimonial-card" style="border: 1px solid #ccc; padding:10px; margin-bottom:10px;">
-                <h4>@t.Name</h4>
-                <p>Rating: @t.Rating/5</p>
-                <p>@t.Comment</p>
-                <small>@t.SubmittedOn.ToString("g")</small>
-                <div class="mt-2">
-                    @if (!t.Approved)
-                    {
-                        <button class="btn btn-success me-2" @onclick="() => ApproveTestimonial(t.Id)">Approve</button>
-                        <button class="btn btn-danger" @onclick="() => RejectTestimonial(t.Id)">Reject</button>
-                    }
-                    else
-                    {
-                        <span class="badge bg-success me-2">Approved</span>
-                        <label>
-                            <input type="checkbox" checked="@t.Featured" @onchange="(e) => ToggleFeatured(t.Id, e.Value)" />
-                            Show on Home
-                        </label>
-                    }
-                </div>
-            </div>
-        }
-    }
-</section>
+<h1>Admin Page</h1>
+
+<!-- Testimonial Management Section -->
+<h2>Manage Testimonials</h2>
+@if (testimonials == null)
+{
+    <p>Loading testimonials...</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Submitted On</th>
+                <th>Approved</th>
+                <th>Featured</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in testimonials)
+            {
+                <tr>
+                    <td>@t.Id</td>
+                    <td>@t.Name</td>
+                    <td>@t.Rating</td>
+                    <td>@t.Comment</td>
+                    <td>@t.SubmittedOn.ToString("g")</td>
+                    <td>@(t.Approved ? "Yes" : "No")</td>
+                    <td>
+                        <input type="checkbox" checked="@t.Featured" @onchange="(e) => UpdateFeatured(t, e.Value)" />
+                    </td>
+                    <td>
+                        @if (!t.Approved)
+                        {
+                            <button class="btn btn-success btn-sm" @onclick="() => ApproveTestimonial(t.Id)">Approve</button>
+                        }
+                        <button class="btn btn-danger btn-sm" @onclick="() => RejectTestimonial(t.Id)">Reject</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Site Content Management Section -->
+<h2>Manage Site Content</h2>
+@if (siteContent == null)
+{
+    <p>Loading site content...</p>
+}
+else
+{
+    <EditForm Model="siteContent" OnValidSubmit="UpdateSiteContent">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>About Text</label>
+            <InputTextArea @bind-Value="siteContent.AboutText" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>About Image URL</label>
+            <InputText @bind-Value="siteContent.AboutImageUrl" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Works Content</label>
+            <InputTextArea @bind-Value="siteContent.WorksContent" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Skills Content</label>
+            <InputTextArea @bind-Value="siteContent.SkillsContent" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Contact Email</label>
+            <InputText @bind-Value="siteContent.ContactEmail" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Contact Phone</label>
+            <InputText @bind-Value="siteContent.ContactPhone" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>CV File French URL</label>
+            <InputText @bind-Value="siteContent.CVFileFrenchUrl" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>CV File English URL</label>
+            <InputText @bind-Value="siteContent.CVFileEnglishUrl" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Site Content</button>
+    </EditForm>
+}
 
 @code {
-    private List<Testimonial> allTestimonials;
+    // Testimonials
+    private List<Testimonial> testimonials;
+    // Site content (for the Home page)
+    private SiteContent siteContent;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadAllTestimonials();
+        await LoadTestimonials();
+        await LoadSiteContent();
     }
 
-    private async Task LoadAllTestimonials()
+    private async Task LoadTestimonials()
     {
-        // Endpoint that returns all testimonials
-        allTestimonials = await Http.GetFromJsonAsync<List<Testimonial>>("api/testimonial/all");
+        testimonials = await Http.GetFromJsonAsync<List<Testimonial>>("api/testimonial/all");
+    }
+
+    private async Task LoadSiteContent()
+    {
+        siteContent = await Http.GetFromJsonAsync<SiteContent>("api/content");
     }
 
     private async Task ApproveTestimonial(int id)
     {
-        await Http.PostAsync($"api/testimonial/approve/{id}", null);
-        await LoadAllTestimonials();
+        var response = await Http.PostAsync($"api/testimonial/approve/{id}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadTestimonials();
+        }
     }
 
     private async Task RejectTestimonial(int id)
     {
-        await Http.PostAsync($"api/testimonial/reject/{id}", null);
-        await LoadAllTestimonials();
+        var response = await Http.PostAsync($"api/testimonial/reject/{id}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadTestimonials();
+        }
     }
 
-    private async Task ToggleFeatured(int id, object value)
+    private async Task UpdateFeatured(Testimonial t, object value)
     {
-        bool isFeatured = value is bool b && b;
-        var update = new { Featured = isFeatured };
-        await Http.PutAsJsonAsync($"api/testimonial/feature/{id}", update);
-        await LoadAllTestimonials();
+        bool isChecked = false;
+        if (value is bool b)
+        {
+            isChecked = b;
+        }
+        else if (value is string s && bool.TryParse(s, out var parsed))
+        {
+            isChecked = parsed;
+        }
+        t.Featured = isChecked;
+        var response = await Http.PostAsJsonAsync("api/testimonial/update", t);
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadTestimonials();
+        }
     }
 
+    private async Task UpdateSiteContent()
+    {
+        var response = await Http.PostAsJsonAsync("api/content/update", siteContent);
+        if (response.IsSuccessStatusCode)
+        {
+            // Optionally notify the admin that the update was successful.
+            await LoadSiteContent();
+        }
+    }
+
+    // Models for this page (could also be in a shared project)
     public class Testimonial
     {
         public int Id { get; set; }
@@ -82,6 +178,6 @@
         public DateTime SubmittedOn { get; set; }
         public bool Approved { get; set; }
         public bool Featured { get; set; }
-        public int Rating { get; set; }
+        public double Rating { get; set; }
     }
 }

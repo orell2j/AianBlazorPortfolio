@@ -8,26 +8,31 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services for API endpoints and controllers.
-builder.Services.AddControllers();
+// Register controllers (including your API controller).
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(AianBlazorPortfolio.Components.Controller.TestimonialController).Assembly);
 
-// Optionally, add additional services
-builder.Services.AddSingleton<EmailService>();      // Your email service implementation
-builder.Services.AddSingleton<TestimonialService>();  // Service to store/manage testimonials
+// Register additional services.
+builder.Services.AddSingleton<EmailService>();
+
+// IMPORTANT: Register TestimonialService as Scoped because it depends on the scoped DbContext.
+builder.Services.AddScoped<TestimonialService>();
 
 // Register the DbContext using SQL Server.
 builder.Services.AddDbContext<TestimonialDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers();
-
 var app = builder.Build();
 
-// Configure error handling and HTTPS.
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TestimonialDbContext>();
+    dbContext.Database.EnsureCreated();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseWebAssemblyDebugging();
 }
 else
 {
@@ -36,12 +41,10 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles();  // Serves files from wwwroot (client assets)
 app.UseRouting();
 
-app.MapControllers();
-
-// Map Blazor WebAssembly endpoints (if hosting client assets here).
-app.MapFallbackToFile("index.html");
+app.MapControllers();  // Routes API calls (e.g., /api/testimonial/submit)
+app.MapFallbackToFile("index.html");  // Serves the client app for unmatched routes
 
 app.Run();

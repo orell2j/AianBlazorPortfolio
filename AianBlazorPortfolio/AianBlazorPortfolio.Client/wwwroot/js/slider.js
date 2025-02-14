@@ -1,78 +1,66 @@
 ﻿window.carousel = {
     currentIndex: 0,
     container: null,
+    items: [],
     totalItems: 0,
-    cardWidth: 0,
-    gap: 20,
+
+    updateSlider: function () {
+        // Get all testimonial cards
+        this.items = Array.from(this.container.children);
+        this.totalItems = this.items.length;
+
+        // Remove all positioning classes
+        this.items.forEach(item => {
+            item.classList.remove("center", "left", "right", "hidden");
+        });
+
+        if (this.totalItems === 0) return;
+
+        // Determine indices for center, left and right testimonials (with wrap-around)
+        let centerIndex = this.currentIndex;
+        let leftIndex = (centerIndex - 1 + this.totalItems) % this.totalItems;
+        let rightIndex = (centerIndex + 1) % this.totalItems;
+
+        // Set classes accordingly
+        this.items[centerIndex].classList.add("center");
+        this.items[leftIndex].classList.add("left");
+        this.items[rightIndex].classList.add("right");
+
+        // Hide any testimonials not in this set
+        for (let i = 0; i < this.totalItems; i++) {
+            if (i !== centerIndex && i !== leftIndex && i !== rightIndex) {
+                this.items[i].classList.add("hidden");
+            }
+        }
+    },
+
+    next: function () {
+        if (this.totalItems === 0) return;
+        this.currentIndex = (this.currentIndex + 1) % this.totalItems;
+        this.updateSlider();
+    },
+
+    prev: function () {
+        if (this.totalItems === 0) return;
+        this.currentIndex = (this.currentIndex - 1 + this.totalItems) % this.totalItems;
+        this.updateSlider();
+    },
 
     init: function () {
         this.container = document.getElementById("testimonialContainer");
         if (!this.container) return;
-
-        let cards = Array.from(this.container.children);
-        this.totalItems = cards.length;
-
-        if (this.totalItems === 0) return;
-
-        this.cardWidth = cards[0].offsetWidth + this.gap;
-
-        // Clone first and last elements for smooth looping
-        let firstClone = cards[0].cloneNode(true);
-        let lastClone = cards[this.totalItems - 1].cloneNode(true);
-
-        this.container.appendChild(firstClone);
-        this.container.insertBefore(lastClone, this.container.firstChild);
-
-        this.totalItems += 2; // Account for clones
-
-        this.currentIndex = 1; // Start at first real element
-        this.centerCurrent(false);
-    },
-
-    centerCurrent: function (animate = true) {
-        if (!this.container) return;
-
-        const scrollPosition = this.currentIndex * this.cardWidth;
-        this.container.scrollTo({ left: scrollPosition, behavior: animate ? "smooth" : "auto" });
-    },
-
-    next: function () {
-        if (!this.container) return;
-
-        this.currentIndex++;
-        this.centerCurrent();
-
-        // If at cloned first, jump to real first
-        if (this.currentIndex === this.totalItems - 1) {
-            setTimeout(() => {
-                this.currentIndex = 1;
-                this.centerCurrent(false);
-            }, 500);
-        }
-    },
-
-    prev: function () {
-        if (!this.container) return;
-
-        this.currentIndex--;
-        this.centerCurrent();
-
-        // If at cloned last, jump to real last
-        if (this.currentIndex === 0) {
-            setTimeout(() => {
-                this.currentIndex = this.totalItems - 2;
-                this.centerCurrent(false);
-            }, 500);
-        }
+        this.items = Array.from(this.container.children);
+        this.totalItems = this.items.length;
+        // Start with the first testimonial centered.
+        this.currentIndex = 0;
+        this.updateSlider();
     }
 };
 
-// Initialize when page loads
 window.initializeTestimonialCarousel = function () {
     window.carousel.init();
 };
 
-// Functions for buttons
 window.carouselNext = function () {
     window.carousel.next();
 };

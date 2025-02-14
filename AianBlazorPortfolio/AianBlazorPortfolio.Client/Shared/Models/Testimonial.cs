@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AianBlazorPortfolio.Components.Models;
+namespace AianBlazorPortfolio.Client.Shared.Models;
 
 public class Testimonial
 {

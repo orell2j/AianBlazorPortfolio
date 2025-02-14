@@ -1,19 +1,20 @@
 ﻿<div class="star-rating-display">
-    @for (int i = 1; i <= 5; i++)
+    @for (int star = 1; star <= 5; star++)
     {
-        if (Rating >= i)
-        {
-            <span class="star full">&#9733;</span>
-        }
-        else if (Rating >= i - 0.5)
-        {
-            <!-- For a half star we use a span with a pseudo-element (see CSS) -->
-            <span class="star half">&#9734;</span>
-        }
-        else
-        {
-            <span class="star empty">&#9734;</span>
-        }
+        // Calculate the fill for this star.
+        // For example, if Rating is 3.2:
+        //   star 1: fill = clamp(3.2 - 0, 0, 1) = 1
+        //   star 2: fill = clamp(3.2 - 1, 0, 1) = 1
+        //   star 3: fill = clamp(3.2 - 2, 0, 1) = 1
+        //   star 4: fill = clamp(3.2 - 3, 0, 1) = 0.2
+        //   star 5: fill = clamp(3.2 - 4, 0, 1) = 0
+        var fill = Math.Clamp(Rating - (star - 1), 0, 1);
+        <div class="star" style="position: relative; display: inline-block; font-size: 40px; width: 40px; height: 40px;">
+            <!-- The empty star -->
+            <span class="star-empty">&#9734;</span>
+            <!-- The full star overlay clipped to the correct width -->
+            <span class="star-full" style="position: absolute; top: 0; left: 0; width: @(fill * 100)%;">&#9733;</span>
+        </div>
     }
 </div>
 

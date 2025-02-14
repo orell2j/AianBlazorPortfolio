@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AianBlazorPortfolio", "Aian
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AianBlazorPortfolio.Client", "AianBlazorPortfolio\AianBlazorPortfolio.Client\AianBlazorPortfolio.Client.csproj", "{E6DCF862-266B-495E-A10B-B03BEA754134}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B5710CC-4395-45B4-9247-F9194E85C9AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

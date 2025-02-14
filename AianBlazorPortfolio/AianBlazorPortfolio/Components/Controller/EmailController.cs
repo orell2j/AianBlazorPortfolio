@@ -1,7 +1,7 @@
 ﻿using AianBlazorPortfolio.Components.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AianBlazorPortfolio.Controllers
+namespace AianBlazorPortfolio.Components.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
