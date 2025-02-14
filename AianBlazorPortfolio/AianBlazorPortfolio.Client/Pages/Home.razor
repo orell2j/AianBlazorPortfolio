@@ -2,7 +2,6 @@
 @using AianBlazorPortfolio.Client.Shared
 @using AianBlazorPortfolio.Client.Shared.Models
 @using Microsoft.Extensions.Localization
-@inject IStringLocalizer<Home> Localizer
 @inject HttpClient Http
 @inject IJSRuntime JS
 
@@ -183,44 +182,60 @@
 
 
     <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-        <header class="section-header">
-            <h2 class="section-title">
-                @(currentLanguage == "EN" ? "Contact Me" : "Contactez-moi")
-            </h2>
-            <button class="toggle-button" @onclick="ToggleContact">
-                <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
-                     style="transform: rotate(@(isContactOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
-                    <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
-                </svg>
-            </button>
-        </header>
-        @if (isContactOpen)
-        {
-            <div class="contact-details">
-                <p class="contact-info">
+    <!-- Contact Section -->
+<section id="contact" class="contact-section">
+    <header class="section-header">
+        <h2 class="section-title">
+            @(currentLanguage == "EN" ? "Contact Me" : "Contactez-moi")
+        </h2>
+        <button class="toggle-button" @onclick="ToggleContact">
+            <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
+                 style="transform: rotate(@(isContactOpen ? "90deg" : "0deg")); transition: transform 0.3s;">
+                <polygon points="0,0 20,10 0,20" fill="#D9D9D9" />
+            </svg>
+        </button>
+    </header>
+    @if (isContactOpen)
+    {
+        <div class="contact-details">
+            <div class="contact-info">
+                <p>
                     @(currentLanguage == "EN" ? "Phone: " : "Téléphone: ") @siteContent.ContactPhone
                 </p>
-                <p class="contact-info">
+                <p>
                     @(currentLanguage == "EN" ? "Email: " : "Email: ") @siteContent.ContactEmail
                 </p>
             </div>
-        }
-    </section>
+            <div class="contact-icons">
+                <!-- Replace the src and href values with your actual icon URLs and links -->
+                <a href="https://www.linkedin.com/in/yourprofile" target="_blank">
+                    <img src="images/linkedin.png" alt="LinkedIn" />
+                </a>
+                <a href="mailto:youremail@example.com">
+                    <img src="images/email.png" alt="Email" />
+                </a>
+                <a href="https://github.com/yourprofile" target="_blank">
+                    <img src="images/github.png" alt="GitHub" />
+                </a>
+            </div>
+        </div>
+    }
+</section>
+
 </main>
 
 
 
 @if (isCVViewerOpen)
 {
-    <div class="cv-viewer-overlay">
-        <div class="cv-viewer-container">
-            <button class="close-btn" @onclick="CloseCVViewer">
-                @(currentLanguage == "EN" ? "Close" : "Fermer")
-            </button>
-            <iframe src="@currentCVUrl"></iframe>
-        </div>
+  <div class="cv-viewer-overlay">
+    <div class="cv-viewer-container">
+      <button class="close-btn" @onclick="CloseCVViewer">
+        @(currentLanguage == "EN" ? "Close" : "Fermer")
+      </button>
+      <iframe src="@currentCVUrl" style="width:100%; height:100%; border:none;"></iframe>
     </div>
+  </div>
 }
 
 @code {
@@ -240,6 +255,60 @@
     {
         await LoadFeaturedTestimonials();
         await LoadSiteContent();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Create a DotNetObjectReference for this component.
+            var dotNetRef = DotNetObjectReference.Create(this);
+            // Register sections to auto-open when they come into view.
+            await JS.InvokeVoidAsync("observeSection", "about", dotNetRef, "OpenAboutSection");
+            await JS.InvokeVoidAsync("observeSection", "works", dotNetRef, "OpenWorksSection");
+            await JS.InvokeVoidAsync("observeSection", "skills", dotNetRef, "OpenSkillsSection");
+            await JS.InvokeVoidAsync("observeSection", "contact", dotNetRef, "OpenContactSection");
+        }
+    }
+
+    [JSInvokable]
+    public void OpenAboutSection()
+    {
+        if (!isAboutOpen)
+        {
+            isAboutOpen = true;
+            StateHasChanged();
+        }
+    }
+
+    [JSInvokable]
+    public void OpenWorksSection()
+    {
+        if (!isWorksOpen)
+        {
+            isWorksOpen = true;
+            StateHasChanged();
+        }
+    }
+
+    [JSInvokable]
+    public void OpenSkillsSection()
+    {
+        if (!isSkillsOpen)
+        {
+            isSkillsOpen = true;
+            StateHasChanged();
+        }
+    }
+
+    [JSInvokable]
+    public void OpenContactSection()
+    {
+        if (!isContactOpen)
+        {
+            isContactOpen = true;
+            StateHasChanged();
+        }
     }
 
     private async Task LoadFeaturedTestimonials()

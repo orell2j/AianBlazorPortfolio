@@ -53,7 +53,6 @@ body {
 .nav-container {
     background-color: #202020;
     box-shadow: 0 9px 4px rgba(0,0,0,0.25);
-    width: 96.5%;
     padding: 20px 30px;
     position: sticky;
     top: 0;
@@ -70,7 +69,13 @@ body {
     padding: 0;
 }
 
+.nav-item {
+    flex: 1;
+    text-align: center;
+}
+
 .nav-link {
+    display: inline-block;
     background-color: #D9D9D9;
     padding: 10px 20px;
     font-size: 20px;
@@ -78,6 +83,7 @@ body {
     text-decoration: none;
     border-radius: 90px;
     transition: transform 0.2s, background-color 0.2s;
+    min-width: 150px;
 }
 
     .nav-link:hover {
@@ -101,12 +107,25 @@ body {
     cursor: pointer;
 }
 
+.toggle-button {
+    background-color: #202020; /* Button background */
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50px; /* Or any shape you prefer */
+}
+
+    .toggle-button .toggle-icon,
+    .toggle-button svg {
+        fill: #D9D9D9; /* Icon color */
+    }
+
 /* CV Section */
 .cv-section {
     margin-top: 40px;
     width: 100%;
     max-width: 1200px;
-    padding: 20px;
+    padding: 40px;
 }
 
 .cv-title {
@@ -128,18 +147,101 @@ body {
     background-color: #202020;
     color: #D9D9D9;
     border-radius: 50px;
-    padding: 20px;
+    padding: 40px;
     flex: 1;
-    max-width: 500px;
+    max-width: 600px;
     text-align: center;
     box-shadow: 0 9px 4px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
+/* CV Preview Container */
+.cv-preview {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+    .cv-preview img {
+        width: 100%;
+        border-radius: 20px;
+    }
+
+/* Overlay PDF label in the bottom-right corner of the preview */
+.pdf-label {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #D9D9D9;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+/* CV Section Actions remain the same */
 .cv-actions {
     display: flex;
-    gap: 10px;
     justify-content: center;
+    gap: 20px;
     margin-top: 20px;
+}
+
+.cv-btn {
+    background-color: #D9D9D9;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 50px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+    .cv-btn:hover {
+        background-color: #bfbfbf;
+        transform: scale(1.05);
+    }
+
+/* Modal styles for the PDF viewer remain unchanged */
+.cv-viewer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.cv-viewer-container {
+    background: #fff;
+    border-radius: 10px;
+    width: 80%;
+    height: 80%;
+    position: relative;
+    overflow: hidden;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #D9D9D9;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 210;
 }
 
 /* Other Sections */
@@ -164,20 +266,42 @@ body {
     width: 100%;
     max-width: 1200px;
     margin-top: 40px;
-    padding: 20px;
+    padding: 40px;
 }
 
+/* Use nowrap if you want them always side by side on larger screens */
 .about-content {
     display: flex;
     gap: 20px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
+/* Give the text more room */
 .about-text {
     background-color: #D9D9D9;
-    padding: 20px;
-    flex: 2;
+    padding: 40px 30px;
+    flex: 3; /* Increase from 2 to 3 */
+    min-height: 300px; /* Optional: ensure a minimum vertical height */
+    border-radius:50px;
 }
+
+/* Adjust the image container */
+.about-image {
+    flex: 2; /* Give image container a bit more width */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    /* Style the image */
+    .about-image img {
+        width: 100%;
+        max-width: 500px; /* Increase as needed for a wider image */
+        max-height: 400px; /* Increase as needed for a taller image */
+        height: auto;
+        border-radius: 10px; /* Optional: round corners for a softer look */
+    }
+
 
 /* Works Section */
 .works-section {
@@ -187,14 +311,15 @@ body {
     width: 100%;
     max-width: 1200px;
     margin-top: 40px;
-    padding: 20px;
+    padding: 40px;
 }
 
 .project-card {
     background-color: #D9D9D9;
-    border-radius: 30px;
+    border-radius: 50px;
     margin: 20px 0;
-    padding: 20px;
+    padding: 40px 30px;
+    min-height: 200px;
 }
 
 /* Skills Section */
@@ -205,7 +330,15 @@ body {
     width: 100%;
     max-width: 1200px;
     margin-top: 40px;
-    padding: 20px;
+    padding: 40px;
+}
+
+.skills-content {
+    background-color: #D9D9D9;
+    border-radius: 50px;
+    margin: 20px 0;
+    padding: 40px 30px;
+    min-height: 200px;
 }
 
 /* Contact Section */
@@ -216,8 +349,46 @@ body {
     width: 100%;
     max-width: 1200px;
     margin-top: 40px;
-    padding: 20px;
+    padding: 40px;
 }
+
+.contact-details {
+    background-color: #D9D9D9;
+    border-radius: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    margin: 20px 0;
+    justify-content: space-between;
+    padding: 40px 30px;
+    min-height: 120px;
+}
+
+.contact-info {
+    flex: 2;
+    font-size: 20px;
+}
+
+.contact-icons {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+    .contact-icons img {
+        max-width: 50px;
+        height: auto;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+        .contact-icons img:hover {
+            transform: scale(1.1);
+        }
+
 
 /* Footer */
 .main-footer {
@@ -227,6 +398,7 @@ body {
     padding: 30px 0;
     text-align: center;
     overflow-x: hidden;
+    margin-top: 40px;
 }
 
 /* === Testimonial Section (Infinite Carousel) === */
@@ -234,12 +406,17 @@ body {
     background-color: #202020;
     border-radius: 50px;
     padding: 40px;
-    margin: 40px auto;
+    margin: 80px auto;
     width: 100%;
-    max-width: 1200px; /* same width as other sections */
-    color: #D9D9D9;
+    max-width: 1200px;
+    color: #202020;
     position: relative;
     overflow: visible; /* allow adjacent items to be partially visible */
+    box-shadow: 0 9px 4px rgba(0,0,0,0.25);
+}
+
+.overall-rating {
+    color: #D9D9D9;
 }
 
 /* Make the container relative so items can be absolutely positioned */
@@ -262,16 +439,16 @@ body {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 60%;
+    width: 40%;
     max-width: 600px;
     transform: translate(-50%, -50%) scale(0.8);
     opacity: 0;
     transition: transform 0.5s ease, opacity 0.5s ease;
     z-index: 1;
     text-align: center;
-    padding: 25px;
-    background-color: #b3b3b3;
-    border-radius: 20px;
+    padding: 45px;
+    background-color: #D9D9D9;
+    border-radius: 40px;
     box-shadow: 0 9px 4px rgba(0,0,0,0.25);
 }
 
@@ -286,7 +463,7 @@ body {
     /* Testimonial to the left */
     .review-card.left {
         transform: translate(-180%, -50%) scale(0.85);
-        opacity: 0.6;
+        opacity: 0.8;
         filter: blur(2px);
         z-index: 2;
     }
@@ -294,7 +471,7 @@ body {
     /* Testimonial to the right */
     .review-card.right {
         transform: translate(80%, -50%) scale(0.85);
-        opacity: 0.6;
+        opacity: 0.8;
         filter: blur(2px);
         z-index: 2;
     }
@@ -315,8 +492,8 @@ body {
     cursor: pointer;
     padding: 12px;
     z-index: 10;
-    width: 60px;
-    height: 200px;
+    width: 500px;
+    height: 500px;
     border-radius: 50%;
     font-size: 26px;
     transition: background 0.3s ease;
@@ -344,20 +521,39 @@ body {
     margin: 40px auto;
     width: 100%;
     max-width: 1200px;
-    height: 450px;
+    height: 400px;
     color: #D9D9D9;
+}
+
+/* Make the form layout two columns */
+.testimonial-form {
+    padding-top: 40px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Left column: name and description */
+.testimonial-left {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Right column: star rating and submit button */
+.testimonial-right {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 20px;
+    /* Optional: ensure the button stays at the bottom */
+    justify-content: flex-start;
 }
 
-    .testimonial-submit h2 {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        font-size: 30px;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
+/* Reuse your existing styling for inputs */
 .testimonial-left .form-control {
     width: 100%;
     padding: 20px;
@@ -367,11 +563,10 @@ body {
     background-color: white;
     box-shadow: 0 9px 4px rgba(0,0,0,0.25);
     border: none;
-    margin-bottom: 20px;
 }
 
 .comment-box {
-    height: 120px;
+    height: 180px;
     padding: 25px;
     font-size: 22px;
     resize: none;
@@ -379,22 +574,15 @@ body {
     border-radius: 50px;
     box-shadow: 0 9px 4px rgba(0,0,0,0.25);
     border: none;
-    margin-bottom: 20px;
 }
 
-.testimonial-right {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 35%;
-}
-
+/* Rating container stays centered */
 .rating-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: 20px;
+    width: 100%;
 }
 
 .rate-text {
@@ -403,6 +591,7 @@ body {
     margin-bottom: 10px;
 }
 
+/* Submit button pushed to bottom in its column */
 .submit-button {
     background-color: #D9D9D9;
     padding: 15px 30px;
@@ -415,12 +604,13 @@ body {
     cursor: pointer;
     transition: background 0.3s ease-in-out;
     box-shadow: 0 9px 4px rgba(0,0,0,0.25);
-    margin-top: 20px;
+    margin-top: auto; /* Pushes button to the bottom */
 }
 
     .submit-button:hover {
         background-color: #bfbfbf;
     }
+
 
 /* === Star Rating Input Styles === */
 .star-rating-input {
