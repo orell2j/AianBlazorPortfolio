@@ -1,7 +1,10 @@
 ﻿using AianBlazorPortfolio.Components.Data;
-using AianBlazorPortfolio.Components.Models; // adjust namespace as needed
+using AianBlazorPortfolio.Components.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace AianBlazorPortfolio.Components.Controller
 {
@@ -10,24 +13,28 @@ namespace AianBlazorPortfolio.Components.Controller
     public class ContentController : ControllerBase
     {
         private readonly TestimonialDbContext _dbContext;
+        private readonly IWebHostEnvironment _env;
 
-        public ContentController(TestimonialDbContext dbContext)
+        public ContentController(TestimonialDbContext dbContext, IWebHostEnvironment env)
         {
             _dbContext = dbContext;
+            _env = env;
         }
 
         // GET api/content
         [HttpGet]
         public async Task<ActionResult<SiteContent>> GetContent()
         {
-            // Assuming there's only one SiteContent record (Id = 1)
             var content = await _dbContext.SiteContents.FirstOrDefaultAsync();
             if (content == null)
             {
-                return NotFound();
+                content = new SiteContent(); // You can set default values if needed.
+                _dbContext.SiteContents.Add(content);
+                await _dbContext.SaveChangesAsync();
             }
             return content;
         }
+
 
         // POST api/content/update
         [HttpPost("update")]
@@ -42,24 +49,52 @@ namespace AianBlazorPortfolio.Components.Controller
             var content = await _dbContext.SiteContents.FirstOrDefaultAsync();
             if (content == null)
             {
-                // Optionally, create a new record if none exists.
                 _dbContext.SiteContents.Add(updatedContent);
             }
             else
             {
-                // Update properties
-                content.AboutText = updatedContent.AboutText;
+                // Update properties including multi-language fields
+                content.AboutTextEnglish = updatedContent.AboutTextEnglish;
+                content.AboutTextFrench = updatedContent.AboutTextFrench;
                 content.AboutImageUrl = updatedContent.AboutImageUrl;
-                content.WorksContent = updatedContent.WorksContent;
-                content.SkillsContent = updatedContent.SkillsContent;
+                content.WorksContentEnglish = updatedContent.WorksContentEnglish;
+                content.WorksContentFrench = updatedContent.WorksContentFrench;
+                content.SkillsContentEnglish = updatedContent.SkillsContentEnglish;
+                content.SkillsContentFrench = updatedContent.SkillsContentFrench;
                 content.ContactEmail = updatedContent.ContactEmail;
                 content.ContactPhone = updatedContent.ContactPhone;
+                content.GithubUrl = updatedContent.GithubUrl;
+                content.LinkedInUrl = updatedContent.LinkedInUrl;
                 content.CVFileFrenchUrl = updatedContent.CVFileFrenchUrl;
                 content.CVFileEnglishUrl = updatedContent.CVFileEnglishUrl;
             }
 
             await _dbContext.SaveChangesAsync();
             return Ok();
+        }
+
+        // POST api/content/upload
+        // Endpoint to upload files (e.g., CVs or images)
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file provided.");
+
+            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            var filePath = Path.Combine(uploadsFolder, file.FileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Return a relative URL to the file
+            var fileUrl = $"/uploads/{file.FileName}";
+            return Ok(new { fileUrl });
         }
     }
 }

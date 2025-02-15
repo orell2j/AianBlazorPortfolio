@@ -53,7 +53,9 @@
         {
             <div class="about-content">
                 <article class="about-text">
-                    @((MarkupString)siteContent.AboutText)
+                    @((MarkupString)(currentLanguage == "EN" 
+                        ? siteContent.AboutTextEnglish 
+                        : siteContent.AboutTextFrench))
                 </article>
                 <aside class="about-image">
                     <img src="@siteContent.AboutImageUrl" alt="About image" style="max-width: 100%;" />
@@ -154,7 +156,9 @@
         @if (isWorksOpen)
         {
             <article class="project-card">
-                @((MarkupString)siteContent.WorksContent)
+                @((MarkupString)(currentLanguage == "EN"
+                    ? siteContent.WorksContentEnglish
+                    : siteContent.WorksContentFrench))
             </article>
         }
     </section>
@@ -175,7 +179,9 @@
         @if (isSkillsOpen)
         {
             <div class="skills-content">
-                @((MarkupString)siteContent.SkillsContent)
+                @((MarkupString)(currentLanguage == "EN"
+                    ? siteContent.SkillsContentEnglish
+                    : siteContent.SkillsContentFrench))
             </div>
         }
     </section>
@@ -201,19 +207,19 @@
                     @(currentLanguage == "EN" ? "Phone: " : "Téléphone: ") @siteContent.ContactPhone
                 </p>
                 <p>
-                    @(currentLanguage == "EN" ? "Email: " : "Email: ") @siteContent.ContactEmail
+                    @(currentLanguage == "EN" ? "Email: " : "Email: ") <a href="mailto:@siteContent.ContactEmail">@siteContent.ContactEmail</a>
                 </p>
             </div>
             <div class="contact-icons">
                 <!-- Replace the src and href values with your actual icon URLs and links -->
-                    <a href="https://www.linkedin.com/in/aian-batoochirov-50521318b/" target="_blank">
-                    <img src="images/linkedin.png" alt="LinkedIn" />
+                <a href="@siteContent.LinkedInUrl" target="_blank">
+                        <img src="/files/images/LinkedIn_icon.png" alt="LinkedIn" class="icon" />
                 </a>
-                <a href="mailto:aianbat50@gmail.com">
-                    <img src="images/email.png" alt="Email" />
+                <a href="mailto:@siteContent.ContactEmail">
+                        <img src="/files/images/Gmail_icon.png" alt="Email" class="icon" />
                 </a>
-                    <a href="https://github.com/orell2j" target="_blank">
-                    <img src="images/github.png" alt="GitHub" />
+                <a href="@siteContent.GithubUrl" target="_blank">
+                        <img src="/files/images/Github_icon.png" alt="GitHub" class="icon" />
                 </a>
             </div>
         </div>
@@ -226,14 +232,14 @@
 
 @if (isCVViewerOpen)
 {
-  <div class="cv-viewer-overlay">
-    <div class="cv-viewer-container">
-      <button class="close-btn" @onclick="CloseCVViewer">
-        @(currentLanguage == "EN" ? "Close" : "Fermer")
-      </button>
-      <iframe src="@currentCVUrl" style="width:100%; height:100%; border:none;"></iframe>
+    <div class="cv-viewer-overlay">
+        <div class="cv-viewer-container">
+            <button class="close-btn" @onclick="CloseCVViewer">
+                @(currentLanguage == "EN" ? "Close" : "Fermer")
+            </button>
+            <iframe src="@currentCVUrl" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
     </div>
-  </div>
 }
 
 @code {
@@ -375,8 +381,8 @@
     public class Testimonial
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Comment { get; set; }
+        public string? Name { get; set; }
+        public string? Comment { get; set; }
         public DateTime SubmittedOn { get; set; }
         public bool Approved { get; set; }
         public bool Featured { get; set; }
@@ -387,4 +393,22 @@
       (displayedTestimonials != null && displayedTestimonials.Any())
         ? displayedTestimonials.Average(t => t.Rating)
         : 0;
+
+    public class SiteContent
+    {
+        public int Id { get; set; }
+        public string? AboutTextEnglish { get; set; }
+        public string? AboutTextFrench { get; set; }
+        public string? AboutImageUrl { get; set; }
+        public string? WorksContentEnglish { get; set; }
+        public string? WorksContentFrench { get; set; }
+        public string? SkillsContentEnglish { get; set; }
+        public string? SkillsContentFrench { get; set; }
+        public string? ContactEmail { get; set; }
+        public string? ContactPhone { get; set; }
+        public string? GithubUrl { get; set; }
+        public string? LinkedInUrl { get; set; }
+        public string? CVFileFrenchUrl { get; set; }
+        public string? CVFileEnglishUrl { get; set; }
+    }
 }

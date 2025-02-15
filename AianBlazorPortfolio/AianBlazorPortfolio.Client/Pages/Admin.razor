@@ -1,110 +1,211 @@
 ﻿@page "/admin"
 @using AianBlazorPortfolio.Client.Shared.Models
 @inject HttpClient Http
+@inject IJSRuntime JS
 
-<h1>Admin Page</h1>
+<main class="admin-portfolio">
+    <!-- Admin Header Section -->
+    <section class="admin-header">
+        <h1>Admin Dashboard</h1>
+    </section>
 
-<!-- Testimonial Management Section -->
-<h2>Manage Testimonials</h2>
-@if (testimonials == null)
-{
-    <p>Loading testimonials...</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Rating</th>
-                <th>Comment</th>
-                <th>Submitted On</th>
-                <th>Approved</th>
-                <th>Featured</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var t in testimonials)
+    <!-- Admin Navigation -->
+    <nav class="admin-nav">
+        <ul>
+            <li><a href="#testimonials-section">Testimonials</a></li>
+            <li><a href="#site-content-section">Site Content</a></li>
+        </ul>
+    </nav>
+
+    <!-- Testimonials Management Section -->
+    <section id="testimonials-section" class="admin-section">
+        <header class="section-header">
+            <h2>Manage Testimonials</h2>
+        </header>
+        <div class="section-content">
+            @if (testimonials == null)
             {
-                <tr>
-                    <td>@t.Id</td>
-                    <td>@t.Name</td>
-                    <td>@t.Rating</td>
-                    <td>@t.Comment</td>
-                    <td>@t.SubmittedOn.ToString("g")</td>
-                    <td>@(t.Approved ? "Yes" : "No")</td>
-                    <td>
-                        <input type="checkbox" checked="@t.Featured" @onchange="(e) => UpdateFeatured(t, e.Value)" />
-                    </td>
-                    <td>
-                        @if (!t.Approved)
-                        {
-                            <button class="btn btn-success btn-sm" @onclick="() => ApproveTestimonial(t.Id)">Approve</button>
-                        }
-                        <button class="btn btn-danger btn-sm" @onclick="() => RejectTestimonial(t.Id)">Reject</button>
-                    </td>
-                </tr>
+                <p>Loading testimonials...</p>
             }
-        </tbody>
-    </table>
-}
+            else
+            {
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Submitted On</th>
+                            <th>Approved</th>
+                            <th>Featured</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in testimonials)
+                        {
+                            <tr>
+                                <td>@t.Id</td>
+                                <td>@t.Name</td>
+                                <td>@t.Rating</td>
+                                <td>@t.Comment</td>
+                                <td>@t.SubmittedOn.ToString("g")</td>
+                                <td>@(t.Approved ? "Yes" : "No")</td>
+                                <td>
+                                    @if (t.Approved)
+                                    {
+                                        <input type="checkbox" checked="@t.Featured" @onchange="(e) => UpdateFeatured(t, e.Value)" />
+                                    }
+                                </td>
+                                <td>
+                                    @if (!t.Approved)
+                                    {
+                                        <button class="btn btn-success btn-sm" @onclick="() => ApproveTestimonial(t.Id)">Approve</button>
+                                    } 
+                                    else{
+                                        <button class="btn btn-warning btn-sm" @onclick="() => DisapproveTestimonial(t.Id)">Disapprove</button>
+                                    }
+                                    <button class="btn btn-danger btn-sm" @onclick="() => RejectTestimonial(t.Id)">Reject</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </section>
 
-<!-- Site Content Management Section -->
-<h2>Manage Site Content</h2>
-@if (siteContent == null)
-{
-    <p>Loading site content...</p>
-}
-else
-{
-    <EditForm Model="siteContent" OnValidSubmit="UpdateSiteContent">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+    <!-- Site Content Management Section -->
+    <section id="site-content-section" class="admin-section">
+        <header class="section-header">
+            <h2>Manage Site Content</h2>
+        </header>
+        <div class="section-content">
+            @if (siteContent == null)
+            {
+                <p>Loading site content...</p>
+            }
+            else
+            {
+                <EditForm Model="siteContent" OnValidSubmit="UpdateSiteContent">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-        <div class="mb-3">
-            <label>About Text</label>
-            <InputTextArea @bind-Value="siteContent.AboutText" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label>About Image URL</label>
-            <InputText @bind-Value="siteContent.AboutImageUrl" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label>Works Content</label>
-            <InputTextArea @bind-Value="siteContent.WorksContent" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label>Skills Content</label>
-            <InputTextArea @bind-Value="siteContent.SkillsContent" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label>Contact Email</label>
-            <InputText @bind-Value="siteContent.ContactEmail" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label>Contact Phone</label>
-            <InputText @bind-Value="siteContent.ContactPhone" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label>CV File French URL</label>
-            <InputText @bind-Value="siteContent.CVFileFrenchUrl" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label>CV File English URL</label>
-            <InputText @bind-Value="siteContent.CVFileEnglishUrl" class="form-control" />
-        </div>
+                    <!-- About Section -->
+                    <div class="content-group">
+                        <h3>About Section</h3>
+                        <div class="form-group">
+                            <label>About Text (English)</label>
+                            <InputTextArea @bind-Value="siteContent.AboutTextEnglish" class="admin-input" />
+                        </div>
+                        <div class="form-group">
+                            <label>About Text (French)</label>
+                            <InputTextArea @bind-Value="siteContent.AboutTextFrench" class="admin-input" />
+                        </div>
+                        <div class="form-group">
+                            <label>About Image URL or Upload</label>
+                            <InputText @bind-Value="siteContent.AboutImageUrl" class="admin-input" />
+                            <div class="inputfile-container">
+                                <button for="aboutImageInput" class="browse-btn">
+                                    <InputFile OnChange="UploadAboutImage" id="aboutImageInput" />
+                                    Browse
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-        <button type="submit" class="btn btn-primary">Update Site Content</button>
-    </EditForm>
-}
+                    <button type="submit" class="btn btn-primary admin-submit">Update Site Content</button>
+
+                    <!-- Works Section -->
+                    <div class="content-group">
+                        <h3>Works Section</h3>
+                        <div class="form-group">
+                            <label>Works Content (English)</label>
+                            <InputTextArea @bind-Value="siteContent.WorksContentEnglish" class="admin-input" />
+                        </div>
+                        <div class="form-group">
+                            <label>Works Content (French)</label>
+                            <InputTextArea @bind-Value="siteContent.WorksContentFrench" class="admin-input" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary admin-submit">Update Site Content</button>
+
+                    <!-- Skills Section -->
+                    <div class="content-group">
+                        <h3>Skills Section</h3>
+                        <div class="form-group">
+                            <label>Skills Content (English)</label>
+                            <InputTextArea @bind-Value="siteContent.SkillsContentEnglish" class="admin-input" />
+                        </div>
+                        <div class="form-group">
+                            <label>Skills Content (French)</label>
+                            <InputTextArea @bind-Value="siteContent.SkillsContentFrench" class="admin-input" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary admin-submit">Update Site Content</button>
+
+                    <!-- Contact Section -->
+                    <div class="content-group">
+                        <h3>Contact Section</h3>
+                        <div class="form-group">
+                            <label>Contact Email</label>
+                            <InputText @bind-Value="siteContent.ContactEmail" class="admin-input" />
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Phone</label>
+                            <InputText @bind-Value="siteContent.ContactPhone" class="admin-input" />
+                        </div>
+                        <div class="form-group">
+                            <label>GitHub URL</label>
+                            <InputText @bind-Value="siteContent.GithubUrl" class="admin-input" />
+                        </div>
+                        <div class="form-group">
+                            <label>LinkedIn URL</label>
+                            <InputText @bind-Value="siteContent.LinkedInUrl" class="admin-input" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary admin-submit">Update Site Content</button>
+
+                    <!-- CV Files Section -->
+                    <div class="content-group">
+                        <h3>CV Files</h3>
+                        <div class="form-group">
+                            <label>CV File (English) URL or Upload</label>
+                            <InputText @bind-Value="siteContent.CVFileEnglishUrl" class="admin-input" />
+                            <div class="inputfile-container">
+                                <button for="cvEnglishInput" class="browse-btn">
+                                    <InputFile OnChange="UploadCVEnglish" id="cvEnglishInput" />
+                                    Browse
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>CV File (French) URL or Upload</label>
+                            <InputText @bind-Value="siteContent.CVFileFrenchUrl" class="admin-input" />
+                            <div class="inputfile-container">
+                                <button for="cvFrenchInput" class="browse-btn">
+                                    <InputFile OnChange="UploadCVFrench" id="cvFrenchInput" />
+                                    Browse
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary admin-submit">Update Site Content</button>
+                </EditForm>
+            }
+        </div>
+    </section>
+</main>
 
 @code {
-    // Testimonials
+    // Local data models and file upload handlers
     private List<Testimonial> testimonials;
-    // Site content (for the Home page)
-    private SiteContent siteContent;
+    private SiteContent siteContent = new SiteContent();
 
     protected override async Task OnInitializedAsync()
     {
@@ -125,59 +226,117 @@ else
     private async Task ApproveTestimonial(int id)
     {
         var response = await Http.PostAsync($"api/testimonial/approve/{id}", null);
-        if (response.IsSuccessStatusCode)
-        {
-            await LoadTestimonials();
-        }
+        if (response.IsSuccessStatusCode) await LoadTestimonials();
+    }
+
+    private async Task DisapproveTestimonial(int id)
+    {
+        var response = await Http.PostAsync($"api/testimonial/disapprove/{id}", null);
+        if (response.IsSuccessStatusCode) await LoadTestimonials();
     }
 
     private async Task RejectTestimonial(int id)
     {
         var response = await Http.PostAsync($"api/testimonial/reject/{id}", null);
-        if (response.IsSuccessStatusCode)
-        {
-            await LoadTestimonials();
-        }
+        if (response.IsSuccessStatusCode) await LoadTestimonials();
     }
 
     private async Task UpdateFeatured(Testimonial t, object value)
     {
-        bool isChecked = false;
-        if (value is bool b)
-        {
-            isChecked = b;
-        }
-        else if (value is string s && bool.TryParse(s, out var parsed))
-        {
-            isChecked = parsed;
-        }
+        bool isChecked = value is bool b ? b : bool.TryParse(value?.ToString(), out var parsed) && parsed;
         t.Featured = isChecked;
         var response = await Http.PostAsJsonAsync("api/testimonial/update", t);
-        if (response.IsSuccessStatusCode)
-        {
-            await LoadTestimonials();
-        }
+        if (response.IsSuccessStatusCode) await LoadTestimonials();
     }
 
     private async Task UpdateSiteContent()
     {
         var response = await Http.PostAsJsonAsync("api/content/update", siteContent);
+        if (response.IsSuccessStatusCode) await LoadSiteContent();
+    }
+
+    private async Task UploadCVEnglish(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var content = new MultipartFormDataContent();
+        using var streamContent = new StreamContent(file.OpenReadStream());
+        streamContent.Headers.ContentType =
+            new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+        content.Add(streamContent, "file", file.Name);
+        var response = await Http.PostAsync("api/content/upload", content);
         if (response.IsSuccessStatusCode)
         {
-            // Optionally notify the admin that the update was successful.
-            await LoadSiteContent();
+            var result = await response.Content.ReadFromJsonAsync<UploadResult>();
+            siteContent.CVFileEnglishUrl = result.fileUrl;
+            StateHasChanged();
         }
     }
 
-    // Models for this page (could also be in a shared project)
+    private async Task UploadCVFrench(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var content = new MultipartFormDataContent();
+        using var streamContent = new StreamContent(file.OpenReadStream());
+        streamContent.Headers.ContentType =
+            new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+        content.Add(streamContent, "file", file.Name);
+        var response = await Http.PostAsync("api/content/upload", content);
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<UploadResult>();
+            siteContent.CVFileFrenchUrl = result.fileUrl;
+            StateHasChanged();
+        }
+    }
+
+    private async Task UploadAboutImage(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var content = new MultipartFormDataContent();
+        using var streamContent = new StreamContent(file.OpenReadStream());
+        streamContent.Headers.ContentType =
+            new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+        content.Add(streamContent, "file", file.Name);
+        var response = await Http.PostAsync("api/content/upload", content);
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<UploadResult>();
+            siteContent.AboutImageUrl = result.fileUrl;
+            StateHasChanged();
+        }
+    }
+
+    public class UploadResult
+    {
+        public string fileUrl { get; set; }
+    }
+
     public class Testimonial
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Comment { get; set; }
+        public string? Name { get; set; }
+        public string? Comment { get; set; }
         public DateTime SubmittedOn { get; set; }
         public bool Approved { get; set; }
         public bool Featured { get; set; }
         public double Rating { get; set; }
+    }
+
+    public class SiteContent
+    {
+        public int Id { get; set; }
+        public string? AboutTextEnglish { get; set; }
+        public string? AboutTextFrench { get; set; }
+        public string? AboutImageUrl { get; set; }
+        public string? WorksContentEnglish { get; set; }
+        public string? WorksContentFrench { get; set; }
+        public string? SkillsContentEnglish { get; set; }
+        public string? SkillsContentFrench { get; set; }
+        public string? ContactEmail { get; set; }
+        public string? ContactPhone { get; set; }
+        public string? GithubUrl { get; set; }
+        public string? LinkedInUrl { get; set; }
+        public string? CVFileFrenchUrl { get; set; }
+        public string? CVFileEnglishUrl { get; set; }
     }
 }

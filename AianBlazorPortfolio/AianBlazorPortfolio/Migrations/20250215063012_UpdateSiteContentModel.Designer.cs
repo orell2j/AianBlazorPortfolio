@@ -4,6 +4,7 @@ using AianBlazorPortfolio.Components.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AianBlazorPortfolio.Migrations
 {
     [DbContext(typeof(TestimonialDbContext))]
-    partial class TestimonialDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250215063012_UpdateSiteContentModel")]
+    partial class UpdateSiteContentModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

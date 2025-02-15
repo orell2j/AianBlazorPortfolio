@@ -75,6 +75,20 @@ namespace AianBlazorPortfolio.Components.Controller
             return Ok(new { message = "Testimonial rejected/removed" });
         }
 
+        // POST: api/testimonial/disapprove/{id}
+        // Admin disapproves a testimonial even if it is approved or featured.
+        [HttpPost("disapprove/{id}")]
+        public async Task<IActionResult> Disapprove(int id)
+        {
+            var t = await _context.Testimonials.FindAsync(id);
+            if (t == null)
+                return NotFound();
+
+            t.Approved = false;
+            t.Featured = false;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Testimonial disapproved" });
+        }
 
         // POST: api/testimonial/feature/{id}?featured=true
         // Admin marks a testimonial as featured (only allowed if approved).
