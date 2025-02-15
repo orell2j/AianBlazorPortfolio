@@ -1,7 +1,13 @@
-﻿<div class="language-toggle">
-    <button class="btn btn-secondary" @onclick="() => ToggleLanguage.InvokeAsync(null)">
-        @(CurrentLanguage == "EN" ? "FR" : "EN")
-    </button>
+﻿<div>
+    <label class="switch">
+        <input type="checkbox" checked="@(CurrentLanguage == "EN")" @onchange="() => ToggleLanguage.InvokeAsync(null)" />
+        <span class="slider round">
+            <span class="thumb">
+                <span class="en">FR</span>
+                <span class="fr">EN</span>
+            </span>
+        </span>
+    </label>
 </div>
 
 @code {

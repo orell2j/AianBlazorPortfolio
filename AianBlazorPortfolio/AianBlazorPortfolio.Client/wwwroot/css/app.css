@@ -96,6 +96,122 @@ body {
         padding: 12px 20px;
     }
 
+/* Always-visible narrow container (acts as a tab) */
+.language-nav {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px; /* a slim visible tab */
+    height: 200px;
+    background: #202020;
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+    overflow: hidden;
+    opacity: 1; /* always visible */
+    transition: width 0.3s ease;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    /* Expand container on hover */
+    .language-nav:hover {
+        width: 90px;
+    }
+
+    /* Hide the switch by default */
+    .language-nav .switch {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Fade in the switch when hovering over the container */
+    .language-nav:hover .switch {
+        opacity: 1;
+    }
+
+    /* Style the language toggle button */
+    .language-nav .language-toggle-btn {
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        background-color: #ffcc00; /* bright color for visibility */
+        color: #000;
+        border: 2px solid #000;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+/* Vertical Switch Container – enlarged */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px; /* increased width */
+    height: 80px; /* increased height */
+}
+
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+/* The slider (background) – update border-radius to half the height */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: blue; /* blue for EN */
+    transition: .4s;
+    border-radius: 40px; /* half of 80px */
+}
+
+/* The thumb inside the slider – enlarged */
+.thumb {
+    position: absolute;
+    width: 36px; /* larger thumb */
+    height: 36px; /* larger thumb */
+    left: 4px;
+    top: 4px; /* starting at the top */
+    background-color: white;
+    border-radius: 50%;
+    transition: .4s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px; /* slightly larger text */
+    color: black;
+}
+
+/* When the checkbox is checked (FR), change slider background and move thumb down */
+.switch input:checked + .slider {
+    background-color: red;
+}
+
+    .switch input:checked + .slider .thumb {
+        transform: translateY(36px); /* move thumb down by its height */
+    }
+
+        /* Show "EN" when not checked and hide "FR" */
+        .switch input:checked + .slider .thumb .en {
+            display: none;
+        }
+
+.switch input:not(:checked) + .slider .thumb .fr {
+    display: none;
+}
+
+
 .language-toggle button {
     min-width: 120px;
     text-align: center;
