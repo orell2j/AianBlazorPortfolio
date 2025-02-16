@@ -12,18 +12,88 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AianBlazorPortfolio.Migrations
 {
     [DbContext(typeof(TestimonialDbContext))]
-    [Migration("20250212185218_SeedTestimonials")]
-    partial class SeedTestimonials
+    [Migration("20250216004109_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.12")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AianBlazorPortfolio.Components.Models.SiteContent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AboutImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AboutTextEnglish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AboutTextFrench")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CVFileEnglishUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CVFileFrenchUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GithubUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SkillsContentEnglish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SkillsContentFrench")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WorksContentEnglish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WorksContentFrench")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SiteContents");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AboutTextEnglish = "Passionate Computer Science student proficient in multiple programming languages and cloud services. Experienced in developing IoT solutions, microservices and full-stack web applications. Seeking an internship to leverage my skills in software development and cloud computing.",
+                            AboutTextFrench = "Étudiant passionné d'informatique maîtrisant plusieurs langages de programmation et services cloud. Expérimenté dans le développement de solutions IoT, de microservices et d'applications web full-stack. À la recherche d'un stage pour mettre à profit mes compétences en développement de logiciels et en cloud computing.",
+                            CVFileEnglishUrl = "/files/CV Aian Batoochirov EN.pdf",
+                            CVFileFrenchUrl = "/files/CV Aian Batoochirov FR.pdf",
+                            ContactEmail = "aianbat50@gmail.com",
+                            ContactPhone = "+1 (438) 528-3019",
+                            GithubUrl = "https://github.com/orell2j",
+                            LinkedInUrl = "http://www.linkedin.com/in/aian-batoochirov-50521318b",
+                            SkillsContentEnglish = "<p>Skills:<br>Java / Springboot, Agile / Scrum, Github / Git, Jira, Rest API, JavaScript / React, Micro Services, Linux, HTML / CSS, SQL / Databases, Teamwork, Problem Solver</p>",
+                            SkillsContentFrench = "<p>Compétences:<br>Java / Springboot, Agile / Scrum, Github / Git, Jira, Rest API, JavaScript / React, Micro Services, HTML / CSS, SQL / Databases, Travail d'équipe, Résolution de problèmes</p>",
+                            WorksContentEnglish = "<p>Projects:<br>• WEB DEV - Pet Clinic Project<br>• WEB DEV - Billing Project Automation</p>",
+                            WorksContentFrench = "<p>Projets:<br>• WEB DEV - Pet Clinic Project<br>• WEB DEV - CompteExpress</p>"
+                        });
+                });
 
             modelBuilder.Entity("AianBlazorPortfolio.Components.Models.Testimonial", b =>
                 {
