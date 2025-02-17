@@ -58,66 +58,6 @@ namespace AianBlazorPortfolio.Components.Data
                     SubmittedOn = new DateTime(2025, 1, 23),
                     Approved = true,
                     Featured = false
-                },
-                new Testimonial
-                {
-                    Id = 5,
-                    Name = "Michael Brown",
-                    Comment = "Really liked it!",
-                    Rating = 5,
-                    SubmittedOn = new DateTime(2025, 1, 24),
-                    Approved = true,
-                    Featured = false
-                },
-                new Testimonial
-                {
-                    Id = 6,
-                    Name = "Sarah Wilson",
-                    Comment = "Could be better.",
-                    Rating = 3.5,
-                    SubmittedOn = new DateTime(2025, 1, 25),
-                    Approved = true,
-                    Featured = false
-                },
-                new Testimonial
-                {
-                    Id = 7,
-                    Name = "David Lee",
-                    Comment = "Outstanding effort!",
-                    Rating = 5,
-                    SubmittedOn = new DateTime(2025, 1, 26),
-                    Approved = true,
-                    Featured = true
-                },
-                new Testimonial
-                {
-                    Id = 8,
-                    Name = "Laura Martinez",
-                    Comment = "Very creative!",
-                    Rating = 4,
-                    SubmittedOn = new DateTime(2025, 1, 27),
-                    Approved = true,
-                    Featured = false
-                },
-                new Testimonial
-                {
-                    Id = 9,
-                    Name = "Chris Taylor",
-                    Comment = "Amazing results!",
-                    Rating = 5,
-                    SubmittedOn = new DateTime(2025, 1, 28),
-                    Approved = true,
-                    Featured = true
-                },
-                new Testimonial
-                {
-                    Id = 10,
-                    Name = "Olivia Harris",
-                    Comment = "Satisfying work.",
-                    Rating = 4.5,
-                    SubmittedOn = new DateTime(2025, 1, 29),
-                    Approved = true,
-                    Featured = false
                 }
             );
 
@@ -127,12 +67,26 @@ namespace AianBlazorPortfolio.Components.Data
                 { 
                     Id = 1,
                     // About Section: extracted from the CVs
-                    AboutTextEnglish = "Passionate Computer Science student proficient in multiple programming languages and cloud services. Experienced in developing IoT solutions, microservices and full-stack web applications. Seeking an internship to leverage my skills in software development and cloud computing.",
-                    AboutTextFrench = "Étudiant passionné d'informatique maîtrisant plusieurs langages de programmation et services cloud. Expérimenté dans le développement de solutions IoT, de microservices et d'applications web full-stack. À la recherche d'un stage pour mettre à profit mes compétences en développement de logiciels et en cloud computing.",
+                    AboutTextEnglish = "Hello! I'm Aian Batoochirov, <br><br> a passionate Computer Science student at Champlain College. " +
+                                        "<br> I've worked on projects full stack webapp projects like a veterinary management system and a billing automation platform. <br>" +
+                                        "<br>I'm eager to learn new technologies and am looking for an internship where I can contribute and grow. Let's connect and create something great together!",
+                    AboutTextFrench = "Bonjour ! Je suis Aian Batoochirov, <br>" +
+                                        "<br>\r\nun étudiant passionné en informatique au Collège Champlain. " +
+                                        "<br>\r\nJ'ai travaillé sur des projets full-stack, tels qu'un système de gestion vétérinaire et une plateforme" +
+                                        " d'automatisation de la facturation. <br><br>\r\nJe suis avide d'apprendre de nouvelles technologies et je recherche un stage où je pourrais contribuer et évoluer. " +
+                                        "Connectons-nous et créons ensemble quelque chose de grand !",
             
                     // Works Section: list of projects (from the CVs)
-                    WorksContentEnglish = "<p>Projects:<br>• WEB DEV - Pet Clinic Project<br>• WEB DEV - Billing Project Automation</p>",
-                    WorksContentFrench = "<p>Projets:<br>• WEB DEV - Pet Clinic Project<br>• WEB DEV - CompteExpress</p>",
+                    WorksContentEnglish = "<p>\r\n  Projects:" +
+                                            "<br>\r\n  • Veterinary Management System – " +
+                                            "<a href=\"https://github.com/cgerard321/champlain_petclinic\" target=\"_blank\">GitHub Repo</a>" +
+                                            "<br>\r\n  • Billing Automation Platform – " +
+                                            "<a href=\"https://github.com/Carlos-123321/CompteExpress\" target=\"_blank\">GitHub Repo</a>\r\n</p>",
+                    WorksContentFrench = "<p>\r\n  Projets :" +
+                                            "<br>\r\n  • Système de gestion vétérinaire – " +
+                                            "<a href=\"https://github.com/cgerard321/champlain_petclinic\" target=\"_blank\">Dépôt GitHub</a>" +
+                                            "<br>\r\n  • Plateforme d'automatisation de la facturation – " +
+                                            "<a href=\"https://github.com/Carlos-123321/CompteExpress\" target=\"_blank\">Dépôt GitHub</a>\r\n</p>",
             
                     // Skills Section: list of technical and soft skills
                     SkillsContentEnglish = "<p>Skills:<br>Java / Springboot, Agile / Scrum, Github / Git, Jira, Rest API, JavaScript / React, Micro Services, Linux, HTML / CSS, SQL / Databases, Teamwork, Problem Solver</p>",
