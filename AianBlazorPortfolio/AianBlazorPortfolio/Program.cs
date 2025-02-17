@@ -2,20 +2,20 @@ using AianBlazorPortfolio.Components.Data;
 using AianBlazorPortfolio.Components.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer; // Add this if needed
+using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register controllers (including your API controller).
+// Register controllers (including API controller).
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(AianBlazorPortfolio.Components.Controller.TestimonialController).Assembly);
 
 // Register additional services.
 builder.Services.AddSingleton<EmailService>();
 
-// IMPORTANT: Register TestimonialService as Scoped because it depends on the scoped DbContext.
+// Register TestimonialService as Scoped because it depends on the scoped DbContext.
 builder.Services.AddScoped<TestimonialService>();
 
 // Register the DbContext using SQL Server.
@@ -41,10 +41,10 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();  // Serves files from wwwroot (client assets)
+app.UseStaticFiles();
 app.UseRouting();
 
-app.MapControllers();  // Routes API calls (e.g., /api/testimonial/submit)
-app.MapFallbackToFile("index.html");  // Serves the client app for unmatched routes
+app.MapControllers();
+app.MapFallbackToFile("index.html");
 
 app.Run();

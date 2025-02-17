@@ -1,7 +1,6 @@
 ﻿/* Base */
 html {
     scroll-behavior: smooth;
-    /* Fluid base font-size */
     font-size: clamp(14px, 1.5vw, 18px);
 }
 
@@ -32,7 +31,6 @@ body {
 
 .header-background {
     background-color: #202020;
-    /* Fluid height using clamp */
     height: clamp(100px, 10vw, 130px);
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
@@ -400,10 +398,8 @@ body {
 
     .about-image img {
         width: 100%;
-        max-width: 500px;
-        max-height: 400px;
         height: auto;
-        border-radius: 10px;
+        border-radius: 30px;
     }
 
 /* Works Section */
@@ -491,6 +487,14 @@ body {
         .contact-icons img:hover {
             transform: scale(1.1);
         }
+
+/* Increase content text size in About Me, My Works, and My Skills sections */
+.about-text,
+.project-card, /* used for Works section */
+.skills-content {
+    font-size: 25px;
+    line-height: 1.4;
+}
 
 /* Footer */
 .main-footer {
@@ -939,6 +943,7 @@ body {
         border-width: medium;
     }
 
+
 /* Media Queries */
 
 /* Mobile devices */
@@ -1005,6 +1010,13 @@ body {
     .section-header h2 {
         text-align: center;
         width: 100%;
+    }
+
+    .about-text,
+    .project-card, /* used for Works section */
+    .skills-content {
+        font-size: 20px;
+        line-height: 1.4;
     }
 
     /* Scale down language nav */

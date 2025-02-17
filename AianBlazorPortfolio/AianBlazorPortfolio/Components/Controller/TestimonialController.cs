@@ -20,7 +20,6 @@ namespace AianBlazorPortfolio.Components.Controller
         }
 
         // POST: api/testimonial/submit
-        // Called by regular users to submit a testimonial (which will need admin approval).
         [HttpPost("submit")]
         public async Task<IActionResult> Submit([FromBody] Testimonial testimonial)
         {
@@ -30,7 +29,6 @@ namespace AianBlazorPortfolio.Components.Controller
         }
 
         // GET: api/testimonial/all
-        // Admin view: returns all testimonials.
         [HttpGet("all")]
         public async Task<IActionResult> GetAllTestimonials()
         {
@@ -39,7 +37,6 @@ namespace AianBlazorPortfolio.Components.Controller
         }
 
         // GET: api/testimonial/list
-        // Public view: returns only testimonials that are approved and featured.
         [HttpGet("list")]
         public async Task<IActionResult> List()
         {
@@ -50,7 +47,6 @@ namespace AianBlazorPortfolio.Components.Controller
         }
 
         // POST: api/testimonial/approve/{id}
-        // Admin approves a testimonial.
         [HttpPost("approve/{id}")]
         public async Task<IActionResult> Approve(int id)
         {
@@ -63,7 +59,6 @@ namespace AianBlazorPortfolio.Components.Controller
         }
 
         // POST: api/testimonial/reject/{id}
-        // Admin rejects (deletes) a testimonial.
         [HttpPost("reject/{id}")]
         public async Task<IActionResult> Reject(int id)
         {
@@ -76,7 +71,6 @@ namespace AianBlazorPortfolio.Components.Controller
         }
 
         // POST: api/testimonial/disapprove/{id}
-        // Admin disapproves a testimonial even if it is approved or featured.
         [HttpPost("disapprove/{id}")]
         public async Task<IActionResult> Disapprove(int id)
         {
@@ -91,7 +85,6 @@ namespace AianBlazorPortfolio.Components.Controller
         }
 
         // POST: api/testimonial/feature/{id}?featured=true
-        // Admin marks a testimonial as featured (only allowed if approved).
         [HttpPost("feature/{id}")]
         public async Task<IActionResult> SetFeatured(int id, [FromQuery] bool featured)
         {
@@ -99,7 +92,6 @@ namespace AianBlazorPortfolio.Components.Controller
             if (t == null)
                 return NotFound();
 
-            // Only allow featuring if the testimonial is approved.
             if (featured && !t.Approved)
                 return BadRequest("Only approved testimonials can be featured.");
 
@@ -109,7 +101,6 @@ namespace AianBlazorPortfolio.Components.Controller
         }
 
         // POST: api/testimonial/update
-        // Admin updates the testimonial content.
         [HttpPost("update")]
         public async Task<IActionResult> Update([FromBody] Testimonial updatedTestimonial)
         {
@@ -120,7 +111,6 @@ namespace AianBlazorPortfolio.Components.Controller
             t.Name = updatedTestimonial.Name;
             t.Comment = updatedTestimonial.Comment;
             t.Rating = updatedTestimonial.Rating;
-            // Allow admin to update Approved and Featured via this endpoint if desired.
             t.Approved = updatedTestimonial.Approved;
             t.Featured = updatedTestimonial.Featured;
 

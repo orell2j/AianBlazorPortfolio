@@ -5,7 +5,7 @@ namespace AianBlazorPortfolio.Components.Models
     public class SiteContent
     {
         [Key]
-        public int Id { get; set; }  // Always use Id = 1 as the single record
+        public int Id { get; set; } 
 
         // About Section (multi-language)
         public string? AboutTextEnglish { get; set; }

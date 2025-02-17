@@ -45,7 +45,6 @@ namespace AianBlazorPortfolio.Components.Controller
                 return BadRequest();
             }
 
-            // Retrieve the existing content record (assuming a single record with Id=1)
             var content = await _dbContext.SiteContents.FirstOrDefaultAsync();
             if (content == null)
             {
@@ -53,7 +52,6 @@ namespace AianBlazorPortfolio.Components.Controller
             }
             else
             {
-                // Update properties including multi-language fields
                 content.AboutTextEnglish = updatedContent.AboutTextEnglish;
                 content.AboutTextFrench = updatedContent.AboutTextFrench;
                 content.AboutImageUrl = updatedContent.AboutImageUrl;
@@ -74,7 +72,6 @@ namespace AianBlazorPortfolio.Components.Controller
         }
 
         // POST api/content/upload
-        // Endpoint to upload files (e.g., CVs or images)
         [HttpPost("upload")]
         public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
         {
@@ -92,7 +89,6 @@ namespace AianBlazorPortfolio.Components.Controller
                 await file.CopyToAsync(stream);
             }
 
-            // Return a relative URL to the file
             var fileUrl = $"/uploads/{file.FileName}";
             return Ok(new { fileUrl });
         }

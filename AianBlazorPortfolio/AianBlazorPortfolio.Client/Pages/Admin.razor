@@ -2,6 +2,7 @@
 @using AianBlazorPortfolio.Client.Shared.Models
 @inject HttpClient Http
 @inject IJSRuntime JS
+@inject NavigationManager Navigation
 
 <main class="admin-portfolio">
     <!-- Admin Header Section -->
@@ -14,6 +15,7 @@
         <ul>
             <li><a href="#testimonials-section">Testimonials</a></li>
             <li><a href="#site-content-section">Site Content</a></li>
+            <li><a class="logout-btn" @onclick="HandleLogout">Logout</a></li>
         </ul>
     </nav>
 
@@ -203,14 +205,12 @@
 </main>
 
 @code {
-    // Local data models and file upload handlers
-    private List<Testimonial> testimonials;
-    private SiteContent siteContent = new SiteContent();
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await LoadTestimonials();
-        await LoadSiteContent();
+        if (!MyAuth.IsLoggedIn)
+        {
+            Navigation.NavigateTo("/login");
+        }
     }
 
     private async Task LoadTestimonials()
@@ -306,6 +306,12 @@
         }
     }
 
+    private void HandleLogout()
+    {
+        MyAuth.IsLoggedIn = false;
+        Navigation.NavigateTo("/login");
+    }
+
     public class UploadResult
     {
         public string fileUrl { get; set; }
@@ -320,6 +326,19 @@
         public bool Approved { get; set; }
         public bool Featured { get; set; }
         public double Rating { get; set; }
+    }
+
+    private List<Testimonial> testimonials;
+    private SiteContent siteContent = new SiteContent();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!MyAuth.IsLoggedIn)
+        {
+            return;
+        }
+        await LoadTestimonials();
+        await LoadSiteContent();
     }
 
     public class SiteContent
