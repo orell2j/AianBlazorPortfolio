@@ -5,9 +5,9 @@
       "secretStore": "LocalSecretsFile",
       "containerName": "postgresql",
       "containerImage": "postgres",
-      "resourceId": null,
       "type": "postgresql.container",
-      "connectionId": "ConnectionStrings:DefaultConnection"
+      "connectionId": "ConnectionStrings:DefaultConnection",
+      "dynamicId": null
     }
   }
 }
