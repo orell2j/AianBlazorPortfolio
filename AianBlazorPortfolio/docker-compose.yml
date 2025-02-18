@@ -1,0 +1,40 @@
+version: '3.8'
+
+networks:
+  aian_network:
+    driver: bridge
+
+services:
+  postgres-db:
+    container_name: vs-postgresql-db
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: AianBlazorPortfolioDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
+    networks:
+      - aian_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d AianBlazorPortfolioDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    container_name: AianBlazorPortfolio
+    build:
+      context: .
+      dockerfile: AianBlazorPortfolio/Dockerfile
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=AianBlazorPortfolioDb;Username=postgres;Password=mypassword
+    ports:
+      - "8085:8080"
+    networks:
+      - aian_network
