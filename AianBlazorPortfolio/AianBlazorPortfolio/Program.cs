@@ -1,5 +1,6 @@
 using AianBlazorPortfolio.Components.Data;
 using AianBlazorPortfolio.Components.Services;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
@@ -20,7 +21,7 @@ builder.Services.AddScoped<TestimonialService>();
 
 // Register the DbContext using SQL Server.
 builder.Services.AddDbContext<TestimonialDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 

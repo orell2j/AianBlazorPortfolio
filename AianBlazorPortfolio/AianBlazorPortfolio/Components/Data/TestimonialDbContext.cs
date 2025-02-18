@@ -25,7 +25,7 @@ namespace AianBlazorPortfolio.Components.Data
                     Name = "John Doe",
                     Comment = "Great portfolio!",
                     Rating = 5,
-                    SubmittedOn = new DateTime(2025, 1, 20),
+                    CreatedOn = new DateTime(2025, 1, 20, 0, 0, 0, DateTimeKind.Utc),
                     Approved = true,
                     Featured = true
                 },
@@ -35,7 +35,7 @@ namespace AianBlazorPortfolio.Components.Data
                     Name = "Jane Smith",
                     Comment = "Very professional work.",
                     Rating = 4.5,
-                    SubmittedOn = new DateTime(2025, 1, 21),
+                    CreatedOn = new DateTime(2025, 1, 21, 0, 0, 0, DateTimeKind.Utc),
                     Approved = true,
                     Featured = false
                 },
@@ -45,7 +45,7 @@ namespace AianBlazorPortfolio.Components.Data
                     Name = "Alex Johnson",
                     Comment = "Excellent design!",
                     Rating = 4,
-                    SubmittedOn = new DateTime(2025, 1, 22),
+                    CreatedOn = new DateTime(2025, 1, 22, 0, 0, 0, DateTimeKind.Utc),
                     Approved = true,
                     Featured = false
                 },
@@ -55,7 +55,7 @@ namespace AianBlazorPortfolio.Components.Data
                     Name = "Emily Davis",
                     Comment = "Impressive work.",
                     Rating = 4.5,
-                    SubmittedOn = new DateTime(2025, 1, 23),
+                    CreatedOn = new DateTime(2025, 1, 23, 0, 0, 0, DateTimeKind.Utc),
                     Approved = true,
                     Featured = false
                 }

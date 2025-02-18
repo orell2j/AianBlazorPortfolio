@@ -12,7 +12,8 @@ public class Testimonial
     [Required(ErrorMessage = "Comment is required.")]
     public string Comment { get; set; }
 
-    public DateTime SubmittedOn { get; set; }
+    public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+
     public bool Approved { get; set; }
     public bool Featured { get; set; }
 

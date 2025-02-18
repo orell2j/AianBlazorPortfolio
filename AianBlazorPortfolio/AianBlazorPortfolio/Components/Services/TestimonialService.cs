@@ -14,7 +14,7 @@ namespace AianBlazorPortfolio.Components.Services
 
         public async Task<Testimonial> AddTestimonialAsync(Testimonial testimonial)
         {
-            testimonial.SubmittedOn = DateTime.Now;
+            testimonial.CreatedOn = DateTime.UtcNow;
             testimonial.Approved = false;
             _context.Testimonials.Add(testimonial);
             await _context.SaveChangesAsync();
