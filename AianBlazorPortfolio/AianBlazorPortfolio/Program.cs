@@ -9,6 +9,9 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Ensure the app listens on port 8080 (bind to all interfaces)
+builder.WebHost.UseUrls("http://*:8080");
+
 // Register controllers (including API controller).
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(AianBlazorPortfolio.Components.Controller.TestimonialController).Assembly);
