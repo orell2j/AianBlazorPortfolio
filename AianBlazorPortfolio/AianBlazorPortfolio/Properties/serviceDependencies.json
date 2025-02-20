@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "postgresql1": {
-      "type": "postgresql",
+    "mongodb1": {
+      "type": "mongodb",
       "connectionId": "ConnectionStrings:DefaultConnection",
       "dynamicId": null
     }

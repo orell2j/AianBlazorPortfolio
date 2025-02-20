@@ -64,8 +64,9 @@
                                     @if (!t.Approved)
                                     {
                                         <button class="btn btn-success btn-sm" @onclick="() => ApproveTestimonial(t.Id)">Approve</button>
-                                    } 
-                                    else{
+                                    }
+                                    else
+                                    {
                                         <button class="btn btn-warning btn-sm" @onclick="() => DisapproveTestimonial(t.Id)">Disapprove</button>
                                     }
                                     <button class="btn btn-danger btn-sm" @onclick="() => RejectTestimonial(t.Id)">Reject</button>
@@ -109,14 +110,13 @@
                             <label>About Image URL or Upload</label>
                             <InputText @bind-Value="siteContent.AboutImageUrl" class="admin-input" />
                             <div class="inputfile-container">
-                                <button for="aboutImageInput" class="browse-btn">
-                                    <InputFile OnChange="UploadAboutImage" id="aboutImageInput" />
+                                <label for="aboutImageInput" class="browse-btn">
                                     Browse
-                                </button>
+                                    <InputFile OnChange="UploadAboutImage" id="aboutImageInput" style="display:none;" />
+                                </label>
                             </div>
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-primary admin-submit">Update Site Content</button>
 
                     <!-- Works Section -->
@@ -131,7 +131,6 @@
                             <InputTextArea @bind-Value="siteContent.WorksContentFrench" class="admin-input" />
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-primary admin-submit">Update Site Content</button>
 
                     <!-- Skills Section -->
@@ -146,7 +145,6 @@
                             <InputTextArea @bind-Value="siteContent.SkillsContentFrench" class="admin-input" />
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-primary admin-submit">Update Site Content</button>
 
                     <!-- Contact Section -->
@@ -169,7 +167,6 @@
                             <InputText @bind-Value="siteContent.LinkedInUrl" class="admin-input" />
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-primary admin-submit">Update Site Content</button>
 
                     <!-- CV Files Section -->
@@ -179,20 +176,20 @@
                             <label>CV File (English) URL or Upload</label>
                             <InputText @bind-Value="siteContent.CVFileEnglishUrl" class="admin-input" />
                             <div class="inputfile-container">
-                                <button for="cvEnglishInput" class="browse-btn">
-                                    <InputFile OnChange="UploadCVEnglish" id="cvEnglishInput" />
+                                <label for="cvEnglishInput" class="browse-btn">
                                     Browse
-                                </button>
+                                    <InputFile OnChange="UploadCVEnglish" id="cvEnglishInput" style="display:none;" />
+                                </label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>CV File (French) URL or Upload</label>
                             <InputText @bind-Value="siteContent.CVFileFrenchUrl" class="admin-input" />
                             <div class="inputfile-container">
-                                <button for="cvFrenchInput" class="browse-btn">
-                                    <InputFile OnChange="UploadCVFrench" id="cvFrenchInput" />
+                                <label for="cvFrenchInput" class="browse-btn">
                                     Browse
-                                </button>
+                                    <InputFile OnChange="UploadCVFrench" id="cvFrenchInput" style="display:none;" />
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -205,12 +202,16 @@
 </main>
 
 @code {
-    protected override void OnInitialized()
+    // Merge authentication check and async initialization
+    protected override async Task OnInitializedAsync()
     {
         if (!MyAuth.IsLoggedIn)
         {
             Navigation.NavigateTo("/login");
+            return;
         }
+        await LoadTestimonials();
+        await LoadSiteContent();
     }
 
     private async Task LoadTestimonials()
@@ -223,19 +224,19 @@
         siteContent = await Http.GetFromJsonAsync<SiteContent>("api/content");
     }
 
-    private async Task ApproveTestimonial(int id)
+    private async Task ApproveTestimonial(string id)
     {
         var response = await Http.PostAsync($"api/testimonial/approve/{id}", null);
         if (response.IsSuccessStatusCode) await LoadTestimonials();
     }
 
-    private async Task DisapproveTestimonial(int id)
+    private async Task DisapproveTestimonial(string id)
     {
         var response = await Http.PostAsync($"api/testimonial/disapprove/{id}", null);
         if (response.IsSuccessStatusCode) await LoadTestimonials();
     }
 
-    private async Task RejectTestimonial(int id)
+    private async Task RejectTestimonial(string id)
     {
         var response = await Http.PostAsync($"api/testimonial/reject/{id}", null);
         if (response.IsSuccessStatusCode) await LoadTestimonials();
@@ -317,9 +318,10 @@
         public string fileUrl { get; set; }
     }
 
+    // Nested client-side model for Testimonial (IDs are now strings)
     public class Testimonial
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
         public string? Name { get; set; }
         public string? Comment { get; set; }
         public DateTime SubmittedOn { get; set; }
@@ -331,19 +333,10 @@
     private List<Testimonial> testimonials;
     private SiteContent siteContent = new SiteContent();
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (!MyAuth.IsLoggedIn)
-        {
-            return;
-        }
-        await LoadTestimonials();
-        await LoadSiteContent();
-    }
-
+    // Nested client-side model for SiteContent
     public class SiteContent
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
         public string? AboutTextEnglish { get; set; }
         public string? AboutTextFrench { get; set; }
         public string? AboutImageUrl { get; set; }

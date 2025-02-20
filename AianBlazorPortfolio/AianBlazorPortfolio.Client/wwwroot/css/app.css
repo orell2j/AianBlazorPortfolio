@@ -835,6 +835,7 @@ body {
 .admin-table {
     width: 100%;
     border-collapse: collapse;
+    overflow-x: auto;
 }
 
     .admin-table th,
@@ -1268,6 +1269,8 @@ body {
 
     .admin-table {
         font-size: 1rem;
+        overflow-x: auto;
+        width: 100%;
     }
 
     .admin-input,

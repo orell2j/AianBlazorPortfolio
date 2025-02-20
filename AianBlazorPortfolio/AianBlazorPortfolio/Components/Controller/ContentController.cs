@@ -1,73 +1,48 @@
-﻿using AianBlazorPortfolio.Components.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using AianBlazorPortfolio.Components.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using AianBlazorPortfolio.Components.Data;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 
 namespace AianBlazorPortfolio.Components.Controller
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ContentController : ControllerBase
     {
-        private readonly TestimonialDbContext _dbContext;
+        private readonly MongoDbService _mongoService;
         private readonly IWebHostEnvironment _env;
 
-        public ContentController(TestimonialDbContext dbContext, IWebHostEnvironment env)
+        public ContentController(MongoDbService mongoService, IWebHostEnvironment env)
         {
-            _dbContext = dbContext;
+            _mongoService = mongoService;
             _env = env;
         }
 
         // GET api/content
         [HttpGet]
-        public async Task<ActionResult<SiteContent>> GetContent()
+        public IActionResult GetContent()
         {
-            var content = await _dbContext.SiteContents.FirstOrDefaultAsync();
+            var content = _mongoService.SiteContents.Find(_ => true).FirstOrDefault();
             if (content == null)
             {
-                content = new SiteContent(); // You can set default values if needed.
-                _dbContext.SiteContents.Add(content);
-                await _dbContext.SaveChangesAsync();
+                content = new SiteContent();
+                _mongoService.SiteContents.InsertOne(content);
             }
-            return content;
+            return Ok(content);
         }
-
 
         // POST api/content/update
         [HttpPost("update")]
         public async Task<IActionResult> UpdateContent([FromBody] SiteContent updatedContent)
         {
             if (updatedContent == null)
-            {
                 return BadRequest();
-            }
 
-            var content = await _dbContext.SiteContents.FirstOrDefaultAsync();
-            if (content == null)
-            {
-                _dbContext.SiteContents.Add(updatedContent);
-            }
-            else
-            {
-                content.AboutTextEnglish = updatedContent.AboutTextEnglish;
-                content.AboutTextFrench = updatedContent.AboutTextFrench;
-                content.AboutImageUrl = updatedContent.AboutImageUrl;
-                content.WorksContentEnglish = updatedContent.WorksContentEnglish;
-                content.WorksContentFrench = updatedContent.WorksContentFrench;
-                content.SkillsContentEnglish = updatedContent.SkillsContentEnglish;
-                content.SkillsContentFrench = updatedContent.SkillsContentFrench;
-                content.ContactEmail = updatedContent.ContactEmail;
-                content.ContactPhone = updatedContent.ContactPhone;
-                content.GithubUrl = updatedContent.GithubUrl;
-                content.LinkedInUrl = updatedContent.LinkedInUrl;
-                content.CVFileFrenchUrl = updatedContent.CVFileFrenchUrl;
-                content.CVFileEnglishUrl = updatedContent.CVFileEnglishUrl;
-            }
-
-            await _dbContext.SaveChangesAsync();
+            var filter = Builders<SiteContent>.Filter.Eq(sc => sc.Id, updatedContent.Id);
+            await _mongoService.SiteContents.ReplaceOneAsync(filter, updatedContent);
             return Ok();
         }
 
@@ -83,12 +58,10 @@ namespace AianBlazorPortfolio.Components.Controller
                 Directory.CreateDirectory(uploadsFolder);
 
             var filePath = Path.Combine(uploadsFolder, file.FileName);
-
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
-
             var fileUrl = $"/uploads/{file.FileName}";
             return Ok(new { fileUrl });
         }

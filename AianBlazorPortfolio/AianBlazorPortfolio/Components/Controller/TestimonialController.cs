@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AianBlazorPortfolio.Components.Models;
+using MongoDB.Driver;
 using AianBlazorPortfolio.Components.Data;
-using AianBlazorPortfolio.Components.Services;
+using AianBlazorPortfolio.Components.Models;
 
 namespace AianBlazorPortfolio.Components.Controller
 {
@@ -10,112 +9,114 @@ namespace AianBlazorPortfolio.Components.Controller
     [Route("api/[controller]")]
     public class TestimonialController : ControllerBase
     {
-        private readonly TestimonialDbContext _context;
-        private readonly TestimonialService _testimonialService;
+        private readonly MongoDbService _mongoService;
 
-        public TestimonialController(TestimonialDbContext context, TestimonialService testimonialService)
+        public TestimonialController(MongoDbService mongoService)
         {
-            _context = context;
-            _testimonialService = testimonialService;
+            _mongoService = mongoService;
         }
 
         // POST: api/testimonial/submit
         [HttpPost("submit")]
         public async Task<IActionResult> Submit([FromBody] Testimonial testimonial)
         {
-            // New testimonials are not approved by default.
-            var result = await _testimonialService.AddTestimonialAsync(testimonial);
-            return Ok(result);
+            testimonial.SubmittedOn = DateTime.UtcNow;
+            testimonial.Approved = false; // new testimonials are not approved by default
+            await _mongoService.Testimonials.InsertOneAsync(testimonial);
+            return Ok(testimonial);
         }
 
         // GET: api/testimonial/all
         [HttpGet("all")]
         public async Task<IActionResult> GetAllTestimonials()
         {
-            var allTestimonials = await _context.Testimonials.ToListAsync();
-            return Ok(allTestimonials);
+            var testimonials = await _mongoService.Testimonials.Find(_ => true).ToListAsync();
+            return Ok(testimonials);
         }
 
         // GET: api/testimonial/list
         [HttpGet("list")]
         public async Task<IActionResult> List()
         {
-            var visible = await _context.Testimonials
-                .Where(t => t.Approved && t.Featured)
-                .ToListAsync();
-            return Ok(visible);
+            var filter = Builders<Testimonial>.Filter.Eq(t => t.Approved, true) &
+                         Builders<Testimonial>.Filter.Eq(t => t.Featured, true);
+            var testimonials = await _mongoService.Testimonials.Find(filter).ToListAsync();
+            return Ok(testimonials);
         }
 
         // POST: api/testimonial/approve/{id}
         [HttpPost("approve/{id}")]
-        public async Task<IActionResult> Approve(int id)
+        public async Task<IActionResult> Approve(string id)
         {
-            var t = await _context.Testimonials.FindAsync(id);
-            if (t == null)
+            var filter = Builders<Testimonial>.Filter.Eq(t => t.Id, id);
+            var update = Builders<Testimonial>.Update.Set(t => t.Approved, true);
+            var result = await _mongoService.Testimonials.UpdateOneAsync(filter, update);
+            if (result.MatchedCount == 0)
                 return NotFound();
-            t.Approved = true;
-            await _context.SaveChangesAsync();
-            return Ok(t);
+            var testimonial = await _mongoService.Testimonials.Find(filter).FirstOrDefaultAsync();
+            return Ok(testimonial);
         }
 
         // POST: api/testimonial/reject/{id}
         [HttpPost("reject/{id}")]
-        public async Task<IActionResult> Reject(int id)
+        public async Task<IActionResult> Reject(string id)
         {
-            var t = await _context.Testimonials.FindAsync(id);
-            if (t == null)
+            var filter = Builders<Testimonial>.Filter.Eq(t => t.Id, id);
+            var result = await _mongoService.Testimonials.DeleteOneAsync(filter);
+            if (result.DeletedCount == 0)
                 return NotFound();
-            _context.Testimonials.Remove(t);
-            await _context.SaveChangesAsync();
             return Ok(new { message = "Testimonial rejected/removed" });
         }
 
         // POST: api/testimonial/disapprove/{id}
         [HttpPost("disapprove/{id}")]
-        public async Task<IActionResult> Disapprove(int id)
+        public async Task<IActionResult> Disapprove(string id)
         {
-            var t = await _context.Testimonials.FindAsync(id);
-            if (t == null)
+            var filter = Builders<Testimonial>.Filter.Eq(t => t.Id, id);
+            var update = Builders<Testimonial>.Update.Set(t => t.Approved, false)
+                                                     .Set(t => t.Featured, false);
+            var result = await _mongoService.Testimonials.UpdateOneAsync(filter, update);
+            if (result.MatchedCount == 0)
                 return NotFound();
-
-            t.Approved = false;
-            t.Featured = false;
-            await _context.SaveChangesAsync();
             return Ok(new { message = "Testimonial disapproved" });
         }
 
         // POST: api/testimonial/feature/{id}?featured=true
         [HttpPost("feature/{id}")]
-        public async Task<IActionResult> SetFeatured(int id, [FromQuery] bool featured)
+        public async Task<IActionResult> SetFeatured(string id, [FromQuery] bool featured)
         {
-            var t = await _context.Testimonials.FindAsync(id);
-            if (t == null)
+            var filter = Builders<Testimonial>.Filter.Eq(t => t.Id, id);
+            var testimonial = await _mongoService.Testimonials.Find(filter).FirstOrDefaultAsync();
+            if (testimonial == null)
                 return NotFound();
 
-            if (featured && !t.Approved)
+            if (featured && !testimonial.Approved)
                 return BadRequest("Only approved testimonials can be featured.");
 
-            t.Featured = featured;
-            await _context.SaveChangesAsync();
-            return Ok(t);
+            var update = Builders<Testimonial>.Update.Set(t => t.Featured, featured);
+            await _mongoService.Testimonials.UpdateOneAsync(filter, update);
+            testimonial.Featured = featured;
+            return Ok(testimonial);
         }
 
         // POST: api/testimonial/update
         [HttpPost("update")]
         public async Task<IActionResult> Update([FromBody] Testimonial updatedTestimonial)
         {
-            var t = await _context.Testimonials.FindAsync(updatedTestimonial.Id);
-            if (t == null)
+            var filter = Builders<Testimonial>.Filter.Eq(t => t.Id, updatedTestimonial.Id);
+            var update = Builders<Testimonial>.Update
+                .Set(t => t.Name, updatedTestimonial.Name)
+                .Set(t => t.Comment, updatedTestimonial.Comment)
+                .Set(t => t.Rating, updatedTestimonial.Rating)
+                .Set(t => t.Approved, updatedTestimonial.Approved)
+                .Set(t => t.Featured, updatedTestimonial.Featured);
+
+            var result = await _mongoService.Testimonials.UpdateOneAsync(filter, update);
+            if (result.MatchedCount == 0)
                 return NotFound();
 
-            t.Name = updatedTestimonial.Name;
-            t.Comment = updatedTestimonial.Comment;
-            t.Rating = updatedTestimonial.Rating;
-            t.Approved = updatedTestimonial.Approved;
-            t.Featured = updatedTestimonial.Featured;
-
-            await _context.SaveChangesAsync();
-            return Ok(t);
+            var testimonial = await _mongoService.Testimonials.Find(filter).FirstOrDefaultAsync();
+            return Ok(testimonial);
         }
     }
 }

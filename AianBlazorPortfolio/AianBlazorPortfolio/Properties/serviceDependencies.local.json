@@ -1,11 +1,23 @@
 {
   "dependencies": {
     "postgresql1": {
-      "containerPorts": "5432:5432",
+      "ignored": "true",
+      "type": "postgresql"
+    },
+    "mssql1": {
+      "ignored": "true",
+      "type": "mssql"
+    },
+    "sqlite1": {
+      "ignored": "true",
+      "type": "sqlite"
+    },
+    "mongodb1": {
+      "containerPorts": "27017:27017",
       "secretStore": "LocalSecretsFile",
-      "containerName": "postgresql",
-      "containerImage": "postgres",
-      "type": "postgresql.container",
+      "containerName": "mongodb",
+      "containerImage": "mongo",
+      "type": "mongodb.container",
       "connectionId": "ConnectionStrings:DefaultConnection",
       "dynamicId": null
     }

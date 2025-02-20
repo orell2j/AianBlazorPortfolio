@@ -1,25 +1,24 @@
 ﻿using AianBlazorPortfolio.Components.Data;
 using AianBlazorPortfolio.Components.Models;
+using MongoDB.Driver;
 
 namespace AianBlazorPortfolio.Components.Services
 {
     public class TestimonialService
     {
-        private readonly TestimonialDbContext _context;
+        private readonly MongoDbService _mongoService;
 
-        public TestimonialService(TestimonialDbContext context)
+        public TestimonialService(MongoDbService mongoService)
         {
-            _context = context;
+            _mongoService = mongoService;
         }
 
         public async Task<Testimonial> AddTestimonialAsync(Testimonial testimonial)
         {
-            testimonial.CreatedOn = DateTime.UtcNow;
+            testimonial.SubmittedOn = DateTime.UtcNow;
             testimonial.Approved = false;
-            _context.Testimonials.Add(testimonial);
-            await _context.SaveChangesAsync();
+            await _mongoService.Testimonials.InsertOneAsync(testimonial);
             return testimonial;
         }
     }
-
 }
