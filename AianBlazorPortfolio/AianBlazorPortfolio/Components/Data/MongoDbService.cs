@@ -10,8 +10,10 @@ namespace AianBlazorPortfolio.Components.Data
 
         public MongoDbService(IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = "mongodb+srv://ayanbat50:FHB32pMxr5mvEnjv@aianportfoliodevcluster.sewqw.mongodb.net/?retryWrites=true&w=majority&appName=AianPortfolioDevCluster";
             var databaseName = configuration["MongoDB:DatabaseName"];
+
+            Console.WriteLine($"Using connection string: {connectionString}");
 
             var client = new MongoClient(connectionString);
             _database = client.GetDatabase(databaseName);
