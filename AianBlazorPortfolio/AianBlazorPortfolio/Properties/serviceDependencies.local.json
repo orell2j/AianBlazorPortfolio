@@ -12,13 +12,8 @@
       "ignored": "true",
       "type": "sqlite"
     },
-    "mongodb1": {
-      "containerPorts": "27017:27017",
-      "secretStore": "LocalSecretsFile",
-      "containerName": "mongodb",
-      "containerImage": "mongo",
-      "type": "mongodb.container",
-      "connectionId": "ConnectionStrings:DefaultConnection",
+    "secrets1": {
+      "type": "secrets.user",
       "dynamicId": null
     }
   }

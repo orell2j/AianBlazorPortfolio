@@ -1,8 +1,7 @@
 {
   "dependencies": {
-    "mongodb1": {
-      "type": "mongodb",
-      "connectionId": "ConnectionStrings:DefaultConnection",
+    "secrets1": {
+      "type": "secrets",
       "dynamicId": null
     }
   }
