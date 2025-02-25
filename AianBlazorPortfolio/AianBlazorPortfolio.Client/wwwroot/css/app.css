@@ -1298,11 +1298,29 @@ body {
 
 /* large screens */
 @media (min-width: 2560px) {
+    /* Limit the width of your main containers and center them */
     .portfolio,
     .about-section,
     .works-section,
     .skills-section,
-    .contact-section {
-        max-width: 2000px;
+    .contact-section,
+    .admin-portfolio {
+        max-width: 1200px; /* Adjust as needed */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 20px;
+        padding-right: 20px;
+        text-align: center;
+    }
+
+    /* Optionally center header content */
+    .main-header .header-content {
+        text-align: center;
+    }
+
+    /* Center navigation items if needed */
+    .nav-list {
+        justify-content: center;
     }
 }
+
