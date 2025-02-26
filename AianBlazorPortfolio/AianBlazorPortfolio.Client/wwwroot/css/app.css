@@ -413,13 +413,87 @@ body {
     padding: clamp(20px, 5vw, 40px);
 }
 
-.project-card {
-    background-color: #D9D9D9;
-    border-radius: 50px;
-    margin: clamp(15px, 3vw, 20px) 0;
-    padding: clamp(20px, 4vw, 40px) clamp(15px, 3vw, 30px);
-    min-height: 200px;
+
+.projects-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; 
+    gap: 20px;
+    max-width: 1200px; 
+    margin: 0 auto;
 }
+
+.project-card {
+    width: 300px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 16px 15px 36px;
+    margin: 0;
+    transition: transform 0.3s ease;
+}
+
+    .project-card:hover {
+        transform: scale(1.05);
+    }
+
+
+
+.project-info {
+    padding: 10px;
+    text-align: center;
+}
+
+.project-title {
+    font-size: 1.3rem;
+    margin: 10px 0;
+    color: #000;
+}
+
+.project-button {
+    background-color: #202020;
+    color: #D9D9D9;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+    .project-button:hover {
+        background-color: #444;
+        transform: scale(1.05);
+    }
+
+
+.project-link {
+    font-size: 1rem;
+    color: #007bff;
+    text-decoration: none;
+}
+
+    .project-link:hover {
+        text-decoration: underline;
+    }
+
+.see-more-btn {
+    margin-top: 20px;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+    .see-more-btn:hover {
+        background-color: #666;
+    }
 
 /* Skills Section */
 .skills-section {
@@ -1129,7 +1203,9 @@ body {
         width: 100%;
     }
 
-
+    .project-card {
+        width: 100% !important;
+    }
 }
 
 @media (max-width: 1370px) {
@@ -1156,7 +1232,7 @@ body {
         padding: 10px;
     }
 
-    /* About Section: narrow container and reorder content */
+    /* About Section*/
     .about-section {
         max-width: 90%;
         margin: 10px auto;
@@ -1298,14 +1374,13 @@ body {
 
 /* large screens */
 @media (min-width: 2560px) {
-    /* Limit the width of your main containers and center them */
     .portfolio,
     .about-section,
     .works-section,
     .skills-section,
     .contact-section,
     .admin-portfolio {
-        max-width: 1200px; /* Adjust as needed */
+        max-width: 1200px;
         margin-left: auto;
         margin-right: auto;
         padding-left: 20px;
@@ -1313,12 +1388,10 @@ body {
         text-align: center;
     }
 
-    /* Optionally center header content */
     .main-header .header-content {
         text-align: center;
     }
 
-    /* Center navigation items if needed */
     .nav-list {
         justify-content: center;
     }

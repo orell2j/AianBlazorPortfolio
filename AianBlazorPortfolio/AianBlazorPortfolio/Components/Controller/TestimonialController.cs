@@ -16,17 +16,15 @@ namespace AianBlazorPortfolio.Components.Controller
             _mongoService = mongoService;
         }
 
-        // POST: api/testimonial/submit
         [HttpPost("submit")]
         public async Task<IActionResult> Submit([FromBody] Testimonial testimonial)
         {
             testimonial.SubmittedOn = DateTime.UtcNow;
-            testimonial.Approved = false; // new testimonials are not approved by default
+            testimonial.Approved = false;
             await _mongoService.Testimonials.InsertOneAsync(testimonial);
             return Ok(testimonial);
         }
 
-        // GET: api/testimonial/all
         [HttpGet("all")]
         public async Task<IActionResult> GetAllTestimonials()
         {
@@ -34,7 +32,6 @@ namespace AianBlazorPortfolio.Components.Controller
             return Ok(testimonials);
         }
 
-        // GET: api/testimonial/list
         [HttpGet("list")]
         public async Task<IActionResult> List()
         {
@@ -44,7 +41,6 @@ namespace AianBlazorPortfolio.Components.Controller
             return Ok(testimonials);
         }
 
-        // POST: api/testimonial/approve/{id}
         [HttpPost("approve/{id}")]
         public async Task<IActionResult> Approve(string id)
         {
@@ -57,7 +53,6 @@ namespace AianBlazorPortfolio.Components.Controller
             return Ok(testimonial);
         }
 
-        // POST: api/testimonial/reject/{id}
         [HttpPost("reject/{id}")]
         public async Task<IActionResult> Reject(string id)
         {
@@ -68,7 +63,6 @@ namespace AianBlazorPortfolio.Components.Controller
             return Ok(new { message = "Testimonial rejected/removed" });
         }
 
-        // POST: api/testimonial/disapprove/{id}
         [HttpPost("disapprove/{id}")]
         public async Task<IActionResult> Disapprove(string id)
         {
@@ -81,7 +75,6 @@ namespace AianBlazorPortfolio.Components.Controller
             return Ok(new { message = "Testimonial disapproved" });
         }
 
-        // POST: api/testimonial/feature/{id}?featured=true
         [HttpPost("feature/{id}")]
         public async Task<IActionResult> SetFeatured(string id, [FromQuery] bool featured)
         {
@@ -99,7 +92,6 @@ namespace AianBlazorPortfolio.Components.Controller
             return Ok(testimonial);
         }
 
-        // POST: api/testimonial/update
         [HttpPost("update")]
         public async Task<IActionResult> Update([FromBody] Testimonial updatedTestimonial)
         {

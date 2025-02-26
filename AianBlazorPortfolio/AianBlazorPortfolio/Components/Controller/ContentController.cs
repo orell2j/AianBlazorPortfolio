@@ -48,7 +48,7 @@ namespace AianBlazorPortfolio.Components.Controller
 
         // POST api/content/upload
         [HttpPost("upload")]
-        [RequestSizeLimit(104857600)] // 100 MB in bytes
+        [RequestSizeLimit(104857600)] // 100 MB
         public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
         {
             if (file == null || file.Length == 0)

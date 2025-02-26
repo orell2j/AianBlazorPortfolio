@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AianBlazorPortfolio.Client.Shared.Models
 {
+    [BsonIgnoreExtraElements]
     public class SiteContent
     {
         [BsonId]
@@ -12,8 +13,7 @@ namespace AianBlazorPortfolio.Client.Shared.Models
         public string? AboutTextEnglish { get; set; }
         public string? AboutTextFrench { get; set; }
         public string? AboutImageUrl { get; set; }
-        public string? WorksContentEnglish { get; set; }
-        public string? WorksContentFrench { get; set; }
+        public List<Project> Projects { get; set; } = new List<Project>();
         public string? SkillsContentEnglish { get; set; }
         public string? SkillsContentFrench { get; set; }
         public string? ContactEmail { get; set; }
@@ -22,5 +22,12 @@ namespace AianBlazorPortfolio.Client.Shared.Models
         public string? LinkedInUrl { get; set; }
         public string? CVFileFrenchUrl { get; set; }
         public string? CVFileEnglishUrl { get; set; }
+    }
+
+    public class Project
+    {
+        public string? Name { get; set; }
+        public string? RepoUrl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

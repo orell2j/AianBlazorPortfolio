@@ -2,6 +2,7 @@
 @using AianBlazorPortfolio.Client.Shared
 @using AianBlazorPortfolio.Client.Shared.Models
 @using Microsoft.Extensions.Localization
+@inject NavigationManager Navigation
 @inject HttpClient Http
 @inject IJSRuntime JS
 
@@ -118,7 +119,7 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="testimonial-left">
-                <InputText class="form-control" @bind-Value="newTestimonial.Name" placeholder="@(currentLanguage == "EN" ? "Type your name" : "Tapez votre nom")" />
+                <InputText class="form-control" @bind-Value="newTestimonial.Name" placeholder="@(currentLanguage == "EN" ? "Type your name" : "Écrivez votre nom")" />
                 <InputTextArea class="form-control comment-box" @bind-Value="newTestimonial.Comment" placeholder="@(currentLanguage == "EN" ? "Write a description" : "Écrivez une description")" />
             </div>
             <div class="testimonial-right">
@@ -139,7 +140,7 @@
     <section id="works" class="works-section">
         <header class="section-header">
             <h2 class="section-title">
-                @(currentLanguage == "EN" ? "My Projects" : "Mes Projets")
+                @(currentLanguage == "EN" ? "My Works" : "Mes Projets")
             </h2>
             <button class="toggle-button" @onclick="ToggleWorks">
                 <svg class="toggle-icon" width="20" height="20" viewBox="0 0 20 20"
@@ -148,13 +149,35 @@
                 </svg>
             </button>
         </header>
+
         @if (isWorksOpen)
         {
-            <article class="project-card">
-                @((MarkupString)(currentLanguage == "EN"
-                    ? siteContent.WorksContentEnglish
-                    : siteContent.WorksContentFrench))
-            </article>
+            <div class="projects-grid" style="gap: 40px;">
+                @foreach (var project in PagedProjects)
+                {
+                    <article class="project-card" style="width:300px;">
+                        <div class="project-image-container">
+                            <img src="@project.ImageUrl"
+                                 alt="@project.Name"
+                                 style="width:300px; height:auto; object-fit:cover; border-radius:8px;" />
+                        </div>
+                        <h2 class="project-title">@project.Name</h2>
+                        <button class="project-button" @onclick="() => OpenGitHub(project.RepoUrl)">
+                            @(currentLanguage == "EN" ? "See on GitHub" : "Voir sur GitHub")
+                        </button>
+                    </article>
+                }
+            </div>
+
+            @if (siteContent.Projects?.Count > ProjectsPerPage)
+            {
+                <button class="see-more-btn" @onclick="SeeMoreProjects">
+                    @(currentLanguage == "EN" ? "See More Projects" : "Voir plus de projets")
+                    <svg width="22" height="22" style="fill:#D9D9D9; margin-left:8px;">
+                        <polygon points="0,0 22,11 0,22" />
+                    </svg>
+                </button>
+            }
         }
     </section>
 
@@ -174,9 +197,7 @@
         @if (isSkillsOpen)
         {
             <div class="skills-content">
-                @((MarkupString)(currentLanguage == "EN"
-                    ? siteContent.SkillsContentEnglish
-                    : siteContent.SkillsContentFrench))
+                @((MarkupString)(currentLanguage == "EN" ? siteContent.SkillsContentEnglish : siteContent.SkillsContentFrench))
             </div>
         }
     </section>
@@ -206,7 +227,6 @@
                     </p>
                 </div>
                 <div class="contact-icons">
-                    <!-- Replace the src and href values with your actual icon URLs and links -->
                     <a href="@siteContent.LinkedInUrl" target="_blank">
                         <img src="/files/images/LinkedIn_icon.png" alt="LinkedIn" class="icon" />
                     </a>
@@ -235,16 +255,25 @@
 }
 
 @code {
+    private int ProjectsPerPage = 3;
+    private int currentProjectPage = 1;
+    private IEnumerable<Project> PagedProjects =>
+        siteContent.Projects.Skip((currentProjectPage - 1) * ProjectsPerPage).Take(ProjectsPerPage);
+
+    private void SeeMoreProjects()
+    {
+        if ((currentProjectPage * ProjectsPerPage) < siteContent.Projects.Count)
+            currentProjectPage++;
+        else
+            currentProjectPage = 1;
+    }
+
     [CascadingParameter] public string currentLanguage { get; set; }
-    // Section toggles and state
     private bool isAboutOpen, isWorksOpen, isSkillsOpen, isContactOpen, isCVViewerOpen;
     private string currentCVUrl;
 
-    // Testimonials
     private List<Testimonial> displayedTestimonials = new List<Testimonial>();
     private Testimonial newTestimonial = new Testimonial { Rating = 0.0 };
-
-    // Site content loaded from backend
     private SiteContent siteContent = new SiteContent();
 
     protected override async Task OnInitializedAsync()
@@ -381,9 +410,9 @@
     }
 
     private double OverallRating =>
-      (displayedTestimonials != null && displayedTestimonials.Any())
-        ? displayedTestimonials.Average(t => t.Rating)
-        : 0;
+        (displayedTestimonials != null && displayedTestimonials.Any())
+            ? displayedTestimonials.Average(t => t.Rating)
+            : 0;
 
     public class SiteContent
     {
@@ -391,8 +420,7 @@
         public string? AboutTextEnglish { get; set; }
         public string? AboutTextFrench { get; set; }
         public string? AboutImageUrl { get; set; }
-        public string? WorksContentEnglish { get; set; }
-        public string? WorksContentFrench { get; set; }
+        public List<Project> Projects { get; set; } = new List<Project>();
         public string? SkillsContentEnglish { get; set; }
         public string? SkillsContentFrench { get; set; }
         public string? ContactEmail { get; set; }
@@ -401,5 +429,29 @@
         public string? LinkedInUrl { get; set; }
         public string? CVFileFrenchUrl { get; set; }
         public string? CVFileEnglishUrl { get; set; }
+    }
+
+    public class Project
+    {
+        public string? Name { get; set; }
+        public string? RepoUrl { get; set; }
+        public string? ImageUrl { get; set; }
+    }
+
+    private void OpenGitHub(string url)
+    {
+        JS.InvokeVoidAsync("open", url, "_blank");
+    }
+
+
+    public class UploadResult
+    {
+        public string fileUrl { get; set; }
+    }
+
+    private void HandleLogout()
+    {
+        MyAuth.IsLoggedIn = false;
+        Navigation.NavigateTo("/login");
     }
 }
