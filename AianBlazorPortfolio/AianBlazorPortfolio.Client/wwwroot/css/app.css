@@ -514,6 +514,36 @@ body {
     min-height: 200px;
 }
 
+.skills-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.skill-card {
+    flex: 0 0 calc(250px - 16px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px 16px;
+    background-color: #f9f9f9;
+}
+
+.skill-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.skill-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
 /* Contact Section */
 .contact-section {
     background-color: #202020;

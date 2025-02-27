@@ -57,19 +57,31 @@
                                 <td>
                                     @if (t.Approved)
                                     {
-                                        <input type="checkbox" checked="@t.Featured" @onchange="(e) => UpdateFeatured(t, e.Value)" />
+                                        <input type="checkbox"
+                                               checked="@t.Featured"
+                                               @onchange="(e) => UpdateFeatured(t, e.Value)" />
                                     }
                                 </td>
                                 <td>
                                     @if (!t.Approved)
                                     {
-                                        <button class="btn btn-success btn-sm" @onclick="() => ApproveTestimonial(t.Id)">Approve</button>
+                                        <button class="btn btn-success btn-sm"
+                                                @onclick="() => ApproveTestimonial(t.Id)">
+                                            Approve
+                                        </button>
                                     }
                                     else
                                     {
-                                        <button class="btn btn-warning btn-sm" @onclick="() => DisapproveTestimonial(t.Id)">Disapprove</button>
+                                        <button class="btn btn-warning btn-sm"
+                                                @onclick="() => DisapproveTestimonial(t.Id)">
+                                            Disapprove
+                                        </button>
                                     }
-                                    <button class="btn btn-danger btn-sm" @onclick="() => RejectTestimonial(t.Id)">Reject</button>
+                                    <!-- Replace direct call with the confirm method -->
+                                    <button class="btn btn-danger btn-sm"
+                                            @onclick="() => ConfirmRejectTestimonial(t.Id)">
+                                        Reject
+                                    </button>
                                 </td>
                             </tr>
                         }
@@ -144,15 +156,32 @@
 
                     <!-- Skills Section -->
                     <div class="content-group">
-                        <h3>Skills Section</h3>
-                        <div class="form-group">
-                            <label>Skills Content (English)</label>
-                            <InputTextArea @bind-Value="siteContent.SkillsContentEnglish" class="admin-input" />
-                        </div>
-                        <div class="form-group">
-                            <label>Skills Content (French)</label>
-                            <InputTextArea @bind-Value="siteContent.SkillsContentFrench" class="admin-input" />
-                        </div>
+                        <h3>Skills Management</h3>
+
+                        @if (siteContent.Skills == null || !siteContent.Skills.Any())
+                        {
+                            <p>No skills added yet.</p>
+                        }
+                        else
+                        {
+                            <div class="skills-list">
+                                @foreach (var skill in siteContent.Skills)
+                                {
+                                    <div class="skill-entry">
+                                        <strong>@skill.Name</strong><br />
+                                        <img src="@skill.IconUrl" alt="@skill.Name" style="max-width: 50px;" />
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                @onclick="() => RemoveSkill(skill)">
+                                            Remove
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <button type="button" class="btn btn-secondary" @onclick="ShowAddSkillForm">
+                            Add Skill
+                        </button>
                     </div>
 
                     <!-- Contact Section -->
@@ -208,6 +237,45 @@
     </section>
 </main>
 
+@if (isAddSkillVisible)
+{
+    <!-- Centered Modal Overlay for "Add Skill" -->
+    <div class="modal-overlay"
+         style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5); display: flex;
+                align-items: center; justify-content: center; z-index: 1000;">
+        <div class="modal-dialog"
+             style="background: #fff; padding: 20px; border-radius: 8px;
+                    max-width: 500px; width: 90%;">
+            <EditForm Model="newSkill" OnValidSubmit="AddSkill">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>Skill Name:</label>
+                    <InputText @bind-Value="newSkill.Name" class="admin-input" />
+                </div>
+                <div class="form-group">
+                    <label>Skill Icon URL:</label>
+                    <InputText @bind-Value="newSkill.IconUrl" class="admin-input" />
+                    <div class="inputfile-container">
+                        <label for="skillIconInput" class="browse-btn">
+                            Browse
+                            <InputFile OnChange="UploadSkillIcon"
+                                       MaxAllowedSize="10485760"
+                                       id="skillIconInput"
+                                       style="display:none;" />
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Skill</button>
+                <button type="button" class="btn btn-secondary"
+                        @onclick="HideAddSkillForm">
+                    Cancel
+                </button>
+            </EditForm>
+        </div>
+    </div>
+}
+
 @if (isAddProjectVisible)
 {
     <!-- Centered Modal Overlay for "Add Project" -->
@@ -241,6 +309,63 @@
 }
 
 @code {
+    // Skill management
+    private bool isAddSkillVisible = false;
+    private Skill newSkill = new Skill();
+
+    private void ShowAddSkillForm()
+    {
+        newSkill = new Skill();
+        isAddSkillVisible = true;
+    }
+
+    private void HideAddSkillForm() => isAddSkillVisible = false;
+
+    private async Task AddSkill()
+    {
+        if (siteContent.Skills == null)
+            siteContent.Skills = new List<Skill>();
+
+        // Add the new skill to the list
+        siteContent.Skills.Add(newSkill);
+        isAddSkillVisible = false;
+
+        // Update the entire siteContent in the DB
+        var response = await Http.PostAsJsonAsync("api/content/update", siteContent);
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadSiteContent();
+        }
+    }
+
+    private async Task UploadSkillIcon(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var content = new MultipartFormDataContent();
+        using var streamContent = new StreamContent(file.OpenReadStream(10 * 1024 * 1024)); // 10 MB
+        streamContent.Headers.ContentType =
+            new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+
+        content.Add(streamContent, "file", file.Name);
+
+        var response = await Http.PostAsync("api/content/upload", content);
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<UploadResult>();
+            // Set the IconUrl for the new skill
+            newSkill.IconUrl = result.fileUrl;
+            StateHasChanged();
+        }
+    }
+
+    private void RemoveSkill(Skill skill)
+    {
+        siteContent.Skills.Remove(skill);
+        // Save updated siteContent
+        _ = Http.PostAsJsonAsync("api/content/update", siteContent);
+    }
+
+
     // Project management
     private bool isAddProjectVisible = false;
     private Project newProject = new Project();
@@ -405,9 +530,9 @@
     }
     private void CloseCVViewer() => isCVViewerOpen = false;
 
-    [CascadingParameter] public string currentLanguage { get; set; }
+    [CascadingParameter] public string? currentLanguage { get; set; }
     private bool isAboutOpen, isWorksOpen, isSkillsOpen, isContactOpen, isCVViewerOpen;
-    private string currentCVUrl;
+    private string? currentCVUrl;
 
     private int ProjectsPerPage = 3;
     private int currentProjectPage = 1;
@@ -441,8 +566,7 @@
         public string? AboutTextFrench { get; set; }
         public string? AboutImageUrl { get; set; }
         public List<Project> Projects { get; set; } = new List<Project>();
-        public string? SkillsContentEnglish { get; set; }
-        public string? SkillsContentFrench { get; set; }
+        public List<Skill> Skills { get; set; } = new List<Skill>();
         public string? ContactEmail { get; set; }
         public string? ContactPhone { get; set; }
         public string? GithubUrl { get; set; }
@@ -458,9 +582,15 @@
         public string? ImageUrl { get; set; }
     }
 
+    public class Skill
+    {
+        public string? Name { get; set; }
+        public string? IconUrl { get; set; }
+    }
+
     public class UploadResult
     {
-        public string fileUrl { get; set; }
+        public string? fileUrl { get; set; }
     }
 
     private void HandleLogout()
@@ -468,4 +598,17 @@
         MyAuth.IsLoggedIn = false;
         Navigation.NavigateTo("/login");
     }
+
+    private async Task ConfirmRejectTestimonial(string id)
+    {
+        // Show a confirmation dialog
+        bool confirmed = await JS.InvokeAsync<bool>("confirm",
+            "Are you sure you want to delete this testimonial?");
+
+        if (confirmed)
+        {
+            await RejectTestimonial(id);
+        }
+    }
+
 }

@@ -195,10 +195,56 @@
                 </svg>
             </button>
         </header>
+
         @if (isSkillsOpen)
         {
-            <div class="skills-content">
-                @((MarkupString)(currentLanguage == "EN" ? siteContent.SkillsContentEnglish : siteContent.SkillsContentFrench))
+            <div class="skills-cards-container" style="
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+                margin-top: 20px;
+                justify-content: center; /* center horizontally */
+                ">
+                @if (siteContent.Skills != null && siteContent.Skills.Any())
+                {
+                    @foreach (var skill in siteContent.Skills)
+                    {
+                        <!-- Single skill card -->
+                        <div class="skill-card" style="
+                            flex: 0 0 calc(250px - 16px);
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            border: 1px solid #ccc;
+                            border-radius: 8px;
+                            padding: 12px 16px;
+                            background-color: #f9f9f9;
+                                    ">
+                            <span class="skill-name" style="
+                              font-size: 1rem;
+                              font-weight: 500;
+                              color: #333;">
+                                @skill.Name
+                            </span>
+
+                            @if (!string.IsNullOrWhiteSpace(skill.IconUrl))
+                            {
+                                <img src="@skill.IconUrl"
+                                     alt="@skill.Name"
+                                     class="skill-icon"
+                                     style="width: 40px; height: 40px; object-fit: contain;" />
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p style="color: red; font-weight: bold;">
+                        @(currentLanguage == "EN"
+                            ? "No skills have been added yet."
+                            : "Aucune compétence ajoutée pour le moment.")
+                    </p>
+                }
             </div>
         }
     </section>
@@ -281,106 +327,19 @@
 }
 
 @code {
+    [CascadingParameter] public string? currentLanguage { get; set; }
 
-    private void ToggleLanguage()
-    {
-        EmailRequest.CurrentLang = currentLanguage;
-    }
-
-    private EmailRequest contactModel = new EmailRequest();
-    private bool emailSent = false;
-    private string emailError;
-
-    private async Task SendEmail()
-    {
-        try
-        {
-            var response = await Http.PostAsJsonAsync("api/email/send", contactModel);
-            if (response.IsSuccessStatusCode)
-            {
-                emailSent = true;
-                emailError = string.Empty;
-                contactModel = new EmailRequest();
-            }
-            else
-            {
-                emailSent = false;
-                emailError = "Failed to send email. Please try again.";
-            }
-        }
-        catch (Exception ex)
-        {
-            emailSent = false;
-            emailError = $"Error sending email: {ex.Message}";
-        }
-    }
-
-    public class EmailRequest : IValidatableObject
-    {
-        public string? Name { get; set; }
-        public string? Email { get; set; }
-        public string? Message { get; set; }
-
-        public static string CurrentLang { get; set; } = "EN";
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (string.IsNullOrWhiteSpace(Name))
-            {
-                yield return new ValidationResult(
-                    CurrentLang == "EN" ? "Name is required." : "Le nom est obligatoire.",
-                    new[] { nameof(Name) }
-                );
-            }
-
-            if (string.IsNullOrWhiteSpace(Email))
-            {
-                yield return new ValidationResult(
-                    CurrentLang == "EN" ? "Email is required." : "L'e-mail est obligatoire.",
-                    new[] { nameof(Email) }
-                );
-            }
-            else
-            {
-                if (!Email.Contains("@") || !Email.Contains("."))
-                {
-                    yield return new ValidationResult(
-                        CurrentLang == "EN" ? "Invalid email format." : "Format d'e-mail invalide.",
-                        new[] { nameof(Email) }
-                    );
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(Message))
-            {
-                yield return new ValidationResult(
-                    CurrentLang == "EN" ? "Message is required." : "Le message est obligatoire.",
-                    new[] { nameof(Message) }
-                );
-            }
-        }
-    }
-
-    private int ProjectsPerPage = 3;
-    private int currentProjectPage = 1;
-    private IEnumerable<Project> PagedProjects =>
-        siteContent.Projects.Skip((currentProjectPage - 1) * ProjectsPerPage).Take(ProjectsPerPage);
-
-    private void SeeMoreProjects()
-    {
-        if ((currentProjectPage * ProjectsPerPage) < siteContent.Projects.Count)
-            currentProjectPage++;
-        else
-            currentProjectPage = 1;
-    }
-
-    [CascadingParameter] public string currentLanguage { get; set; }
     private bool isAboutOpen, isWorksOpen, isSkillsOpen, isContactOpen, isCVViewerOpen;
-    private string currentCVUrl;
+    private string? currentCVUrl;
 
     private List<Testimonial> displayedTestimonials = new List<Testimonial>();
     private Testimonial newTestimonial = new Testimonial { Rating = 0.0 };
+    private bool emailSent = false;
+    private string? emailError;
+
     private SiteContent siteContent = new SiteContent();
+
+    private EmailRequest contactModel = new EmailRequest();
 
     protected override async Task OnInitializedAsync()
     {
@@ -449,17 +408,13 @@
             {
                 displayedTestimonials = testimonials;
                 StateHasChanged();
-                Console.WriteLine($"Loaded {displayedTestimonials.Count} testimonials.");
-            }
-            else
-            {
-                Console.WriteLine("No approved testimonials found.");
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching testimonials: {ex.Message}");
         }
+
         await Task.Delay(200);
         await JS.InvokeVoidAsync("initializeTestimonialCarousel");
     }
@@ -470,7 +425,10 @@
         {
             siteContent = await Http.GetFromJsonAsync<SiteContent>("api/content");
         }
-        catch { }
+        catch
+        {
+            // Handle errors or fallback
+        }
     }
 
     private async Task SubmitTestimonial()
@@ -478,10 +436,11 @@
         newTestimonial.SubmittedOn = DateTime.Now;
         newTestimonial.Approved = false;
         newTestimonial.Featured = false;
+
         var response = await Http.PostAsJsonAsync("api/testimonial/submit", newTestimonial);
         if (response.IsSuccessStatusCode)
         {
-            newTestimonial = new Testimonial();
+            newTestimonial = new Testimonial { Rating = 0.0 };
             await LoadFeaturedTestimonials();
         }
     }
@@ -491,6 +450,11 @@
         newTestimonial.Rating = r;
         await JS.InvokeVoidAsync("console.log", $"New rating selected: {r}");
     }
+
+    private double OverallRating =>
+        (displayedTestimonials != null && displayedTestimonials.Any())
+            ? displayedTestimonials.Average(t => t.Rating)
+            : 0;
 
     private void ToggleAbout() => isAboutOpen = !isAboutOpen;
     private void ToggleWorks() => isWorksOpen = !isWorksOpen;
@@ -504,6 +468,49 @@
     }
     private void CloseCVViewer() => isCVViewerOpen = false;
 
+    private int ProjectsPerPage = 3;
+    private int currentProjectPage = 1;
+    private IEnumerable<Project> PagedProjects =>
+        siteContent.Projects.Skip((currentProjectPage - 1) * ProjectsPerPage)
+                            .Take(ProjectsPerPage);
+
+    private void SeeMoreProjects()
+    {
+        if ((currentProjectPage * ProjectsPerPage) < siteContent.Projects.Count)
+            currentProjectPage++;
+        else
+            currentProjectPage = 1;
+    }
+
+    private void OpenGitHub(string url)
+    {
+        JS.InvokeVoidAsync("open", url, "_blank");
+    }
+
+    private async Task SendEmail()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/email/send", contactModel);
+            if (response.IsSuccessStatusCode)
+            {
+                emailSent = true;
+                emailError = null;
+                contactModel = new EmailRequest();
+            }
+            else
+            {
+                emailSent = false;
+                emailError = "Failed to send email. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            emailSent = false;
+            emailError = $"Error sending email: {ex.Message}";
+        }
+    }
+
     public class Testimonial
     {
         public string? Id { get; set; }
@@ -515,10 +522,53 @@
         public double Rating { get; set; }
     }
 
-    private double OverallRating =>
-        (displayedTestimonials != null && displayedTestimonials.Any())
-            ? displayedTestimonials.Average(t => t.Rating)
-            : 0;
+    public class EmailRequest : IValidatableObject
+    {
+        public string? Name { get; set; }
+        public string? Email { get; set; }
+        public string? Message { get; set; }
+
+        public static string CurrentLang { get; set; } = "EN";
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                yield return new ValidationResult(
+                    CurrentLang == "EN" ? "Name is required." : "Le nom est obligatoire.",
+                    new[] { nameof(Name) }
+                );
+            }
+
+            if (string.IsNullOrWhiteSpace(Email))
+            {
+                yield return new ValidationResult(
+                    CurrentLang == "EN" ? "Email is required." : "L'e-mail est obligatoire.",
+                    new[] { nameof(Email) }
+                );
+            }
+            else
+            {
+                if (!Email.Contains("@") || !Email.Contains("."))
+                {
+                    yield return new ValidationResult(
+                        CurrentLang == "EN"
+                            ? "Invalid email format."
+                            : "Format d'e-mail invalide.",
+                        new[] { nameof(Email) }
+                    );
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(Message))
+            {
+                yield return new ValidationResult(
+                    CurrentLang == "EN" ? "Message is required." : "Le message est obligatoire.",
+                    new[] { nameof(Message) }
+                );
+            }
+        }
+    }
 
     public class SiteContent
     {
@@ -527,8 +577,7 @@
         public string? AboutTextFrench { get; set; }
         public string? AboutImageUrl { get; set; }
         public List<Project> Projects { get; set; } = new List<Project>();
-        public string? SkillsContentEnglish { get; set; }
-        public string? SkillsContentFrench { get; set; }
+        public List<Skill> Skills { get; set; } = new List<Skill>();
         public string? ContactEmail { get; set; }
         public string? ContactPhone { get; set; }
         public string? GithubUrl { get; set; }
@@ -544,20 +593,9 @@
         public string? ImageUrl { get; set; }
     }
 
-    private void OpenGitHub(string url)
+    public class Skill
     {
-        JS.InvokeVoidAsync("open", url, "_blank");
-    }
-
-
-    public class UploadResult
-    {
-        public string fileUrl { get; set; }
-    }
-
-    private void HandleLogout()
-    {
-        MyAuth.IsLoggedIn = false;
-        Navigation.NavigateTo("/login");
+        public string? Name { get; set; }
+        public string? IconUrl { get; set; }
     }
 }

@@ -72,16 +72,22 @@ namespace AianBlazorPortfolio.Components.Data
                     AboutImageUrl = "/files/images/default-about.jpg",
                     // Initialize with an empty project list or with sample projects if desired:
                     Projects = new List<Project>
-          {
-            new Project
-            {
-              Name = "Sample Project",
-              RepoUrl = "https://github.com/sample/repo",
-              ImageUrl = "/files/images/sample-project.jpg"
-            }
-          },
-                    SkillsContentEnglish = "<p>Skills:<br>Java, C#, React, MongoDB, ASP.NET Core</p>",
-                    SkillsContentFrench = "<p>Compétences:<br>Java, C#, React, MongoDB, ASP.NET Core</p>",
+                    {
+                        new Project
+                        {
+                        Name = "Sample Project",
+                        RepoUrl = "https://github.com/sample/repo",
+                        ImageUrl = "/files/images/sample-project.jpg"
+                        }
+                    },
+
+                    Skills = new List<Skill>
+                    {
+                        new Skill { Name = "Java", IconUrl = "" },
+                        new Skill { Name = "C#", IconUrl = "" },
+                        new Skill { Name = "Team Work" }
+                    },
+
                     ContactEmail = "aianbat50@gmail.com",
                     ContactPhone = "+1 (438) 528-3019",
                     GithubUrl = "https://github.com/orell2j",

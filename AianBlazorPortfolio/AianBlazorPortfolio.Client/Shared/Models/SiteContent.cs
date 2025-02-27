@@ -14,8 +14,7 @@ namespace AianBlazorPortfolio.Client.Shared.Models
         public string? AboutTextFrench { get; set; }
         public string? AboutImageUrl { get; set; }
         public List<Project> Projects { get; set; } = new List<Project>();
-        public string? SkillsContentEnglish { get; set; }
-        public string? SkillsContentFrench { get; set; }
+        public List<Skill> Skills { get; set; } = new List<Skill>();
         public string? ContactEmail { get; set; }
         public string? ContactPhone { get; set; }
         public string? GithubUrl { get; set; }
@@ -29,5 +28,11 @@ namespace AianBlazorPortfolio.Client.Shared.Models
         public string? Name { get; set; }
         public string? RepoUrl { get; set; }
         public string? ImageUrl { get; set; }
+    }
+
+    public class Skill
+    {
+        public string? Name { get; set; }
+        public string? IconUrl { get; set; }
     }
 }
