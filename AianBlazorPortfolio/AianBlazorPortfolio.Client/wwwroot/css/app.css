@@ -562,9 +562,74 @@ body {
             transform: scale(1.1);
         }
 
-/* Increase content text size in About Me, My Works, and My Skills sections */
+.contact-form {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+}
+
+.contact-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contact-right {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.contact-input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 50px;
+    border: none;
+    font-size: 18px;
+    box-shadow: 0 9px 4px rgba(0, 0, 0, 0.25);
+    background-color: #fff;
+    margin-top:15px;
+}
+
+.contact-message {
+    width: 90%;
+    height: 200px;
+    padding: 20px;
+    border-radius: 50px;
+    margin-left:40px;
+    border: none;
+    font-size: 18px;
+    box-shadow: 0 9px 4px rgba(0, 0, 0, 0.25);
+    background-color: #fff;
+    resize: none;
+}
+
+.contact-submit-button {
+    background-color: #D9D9D9;
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    box-shadow: 0 9px 4px rgba(0, 0, 0, 0.25);
+    margin-top: auto;
+    max-width: 300px;
+}
+
+    .contact-submit-button:hover {
+        background-color: #bfbfbf;
+    }
+
 .about-text,
-.project-card, /* used for Works section */
+.project-card,
 .skills-content {
     font-size: 25px;
     line-height: 1.4;
@@ -573,13 +638,42 @@ body {
 /* Footer */
 .main-footer {
     background-color: #202020;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     width: 100%;
-    padding: clamp(20px, 4vw, 30px) 0;
-    text-align: center;
-    overflow-x: hidden;
+    padding: 20px 0;
+    color: #fff;
+    position: relative;
     margin-top: clamp(30px, 5vw, 40px);
 }
+
+.footer-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.footer-center {
+    text-align: center;
+}
+
+.footer-right {
+    margin-left: auto;
+    display: flex;
+    gap: 15px;
+}
+
+    .footer-right .icon {
+        width: 40px;
+        height: auto;
+        transition: transform 0.2s;
+        cursor: pointer;
+    }
+
+        .footer-right .icon:hover {
+            transform: scale(1.1);
+        }
 
 /* Testimonial Section (Infinite Carousel) */
 .reviews-section {
@@ -1020,7 +1114,6 @@ body {
 
 
 /* Media Queries */
-
 /* Mobile devices */
 @media (max-width: 768px) {
 
@@ -1206,6 +1299,19 @@ body {
     .project-card {
         width: 100% !important;
     }
+
+    .contact-message {
+        width: 60%;
+        height: 200px;
+        padding: 20px;
+        border-radius: 50px;
+        margin-left: 40px;
+        border: none;
+        font-size: 18px;
+        box-shadow: 0 9px 4px rgba(0, 0, 0, 0.25);
+        background-color: #fff;
+        resize: none;
+    }
 }
 
 @media (max-width: 1370px) {
@@ -1358,6 +1464,19 @@ body {
     .admin-submit {
         width: 100%;
         box-sizing: border-box;
+    }
+
+    .contact-message {
+        width: 80%;
+        height: 200px;
+        padding: 20px;
+        border-radius: 50px;
+        margin-left: 40px;
+        border: none;
+        font-size: 18px;
+        box-shadow: 0 9px 4px rgba(0, 0, 0, 0.25);
+        background-color: #fff;
+        resize: none;
     }
 }
 

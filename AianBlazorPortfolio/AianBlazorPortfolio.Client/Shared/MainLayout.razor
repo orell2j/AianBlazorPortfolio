@@ -1,9 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using AianBlazorPortfolio.Client.Shared.Models
+@inherits LayoutComponentBase
+@inject HttpClient Http
 
 <div class="container-fluid">
-    <!-- Wrap header, main, and footer in a page-content container -->
     <div class="page-content">
-        <!-- Header -->
         <header class="main-header">
             <div class="header-background"></div>
             <div class="header-content">
@@ -13,7 +13,6 @@
             </div>
         </header>
 
-        <!-- Main Navigation -->
         <CascadingValue Value="currentLanguage">
             <NavMenu CurrentLanguage="@currentLanguage" ToggleLanguage="ToggleLanguage" />
             <main>
@@ -22,12 +21,34 @@
         </CascadingValue>
 
         <!-- Footer -->
-        <footer class="main-footer text-center mt-5">
-            <small>&copy; @DateTime.Now.Year @(currentLanguage == "EN" ? "AIAN BATOOCHIROV" : "AIAN BATOOCHIROV")</small>
+        <footer class="main-footer mt-5">
+            @if (siteContent != null)
+            {
+                <div class="footer-container">
+
+                    <div class="footer-center">
+                        <small>
+                            &copy; @DateTime.Now.Year @(currentLanguage == "EN" ? "AIAN BATOOCHIROV" : "AIAN BATOOCHIROV")
+                        </small>
+                        <p>@siteContent.ContactEmail</p>
+                    </div>
+
+                    <div class="footer-right">
+                        <a href="@siteContent.LinkedInUrl" target="_blank">
+                            <img src="/files/images/LinkedIn_icon.png" alt="LinkedIn" class="icon" />
+                        </a>
+                        <a href="mailto:@siteContent.ContactEmail">
+                            <img src="/files/images/Gmail_icon.png" alt="Email" class="icon" />
+                        </a>
+                        <a href="@siteContent.GithubUrl" target="_blank">
+                            <img src="/files/images/Github_icon.png" alt="GitHub" class="icon" />
+                        </a>
+                    </div>
+                </div>
+            }
         </footer>
     </div>
 
-    <!-- Right-side Language Nav Bar -->
     <nav class="language-nav">
         <LanguageToggle CurrentLanguage="@currentLanguage" ToggleLanguage="ToggleLanguage" />
     </nav>
@@ -35,6 +56,18 @@
 
 @code {
     private string currentLanguage = "EN";
+    private SiteContent siteContent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            siteContent = await Http.GetFromJsonAsync<SiteContent>("api/content");
+        }
+        catch { }
+
+        await base.OnInitializedAsync();
+    }
 
     private void ToggleLanguage()
     {
