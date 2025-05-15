@@ -1,4 +1,7 @@
-﻿<nav class="nav-container">
+﻿@using AianBlazorPortfolio.Client.Shared.Models
+@inject NavigationManager Navigation
+
+<nav class="nav-container">
     <ul class="nav-list">
         <li class="nav-item">
             <a class="nav-link" href="#home">@(CurrentLanguage == "EN" ? "Home" : "Accueil")</a>
@@ -16,7 +19,31 @@
             <a class="nav-link" href="#contact">@(CurrentLanguage == "EN" ? "Contact Me" : "Contactez-moi")</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/admin">Log in</a>
+            @if (!MyAuth.IsLoggedIn)
+            {
+                <a class="nav-link" href="/login">
+                    @(CurrentLanguage == "EN" ? "Log in" : "Connexion")
+                </a>
+            }
+            else if (Navigation
+            .ToBaseRelativePath(Navigation.Uri)
+            .Split('?', StringSplitOptions.RemoveEmptyEntries)[0]
+            .Equals("admin", StringComparison.OrdinalIgnoreCase))
+            {
+                <a class="nav-link"
+                   style="cursor:pointer"
+                   @onclick="Logout">
+                    @(CurrentLanguage == "EN" ? "Logout" : "Se déconnecter")
+                </a>
+            }
+            else
+            {
+                <a class="nav-link"
+                   style="cursor:pointer"
+                   @onclick="GoAdmin">
+                    @(CurrentLanguage == "EN" ? "Back to Admin" : "Retour à l’admin")
+                </a>
+            }
         </li>
     </ul>
 </nav>
@@ -25,4 +52,14 @@
     [Parameter] public string CurrentLanguage { get; set; }
     [Parameter] public EventCallback ToggleLanguage { get; set; }
 
+    private void Logout()
+    {
+        MyAuth.IsLoggedIn = false;
+        Navigation.NavigateTo("/login");
+    }
+
+    private void GoAdmin()
+    {
+        Navigation.NavigateTo("/admin");
+    }
 }

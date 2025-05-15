@@ -532,6 +532,10 @@ body {
     background-color: #f9f9f9;
 }
 
+    .skill-card:hover {
+        transform: scale(1.05);
+    }
+
 .skill-name {
     font-size: 1rem;
     font-weight: 500;

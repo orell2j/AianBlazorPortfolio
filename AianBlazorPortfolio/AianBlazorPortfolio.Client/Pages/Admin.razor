@@ -11,6 +11,8 @@
     </section>
 
     <!-- Admin Navigation -->
+
+    <!--
     <nav class="admin-nav">
         <ul>
             <li><a href="#testimonials-section">Testimonials</a></li>
@@ -18,6 +20,8 @@
             <li><a class="logout-btn" @onclick="HandleLogout">Logout</a></li>
         </ul>
     </nav>
+    -->
+
 
     <!-- Testimonials Management Section -->
     <section id="testimonials-section" class="admin-section">
@@ -146,7 +150,10 @@
                                         <strong>@project.Name</strong>
                                         <p>Repo: <a href="@project.RepoUrl" target="_blank">@project.RepoUrl</a></p>
                                         <img src="@project.ImageUrl" alt="@project.Name" style="max-width:100px;" />
-                                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveProject(project)">Remove</button>
+                                        <button type="button" class="btn btn-danger btn-sm" 
+                                            @onclick="() => ConfirmRemoveProject(project)">
+                                                Remove
+                                        </button>
                                     </div>
                                 }
                             </div>
@@ -171,7 +178,7 @@
                                         <strong>@skill.Name</strong><br />
                                         <img src="@skill.IconUrl" alt="@skill.Name" style="max-width: 50px;" />
                                         <button type="button" class="btn btn-danger btn-sm"
-                                                @onclick="() => RemoveSkill(skill)">
+                                                @onclick="() => ConfirmRemoveSkill(skill)">
                                             Remove
                                         </button>
                                     </div>
@@ -358,6 +365,17 @@
         }
     }
 
+    private async Task ConfirmRemoveSkill(Skill skill)
+    {
+        bool ok = await JS.InvokeAsync<bool>("confirm",
+            $"Are you sure you want to delete skill “{skill.Name}”?");
+        if (!ok) return;
+
+        siteContent.Skills.Remove(skill);
+        await Http.PostAsJsonAsync("api/content/update", siteContent);
+        StateHasChanged();
+    }
+
     private void RemoveSkill(Skill skill)
     {
         siteContent.Skills.Remove(skill);
@@ -410,6 +428,18 @@
     {
         siteContent.Projects.Remove(project);
         _ = Http.PostAsJsonAsync("api/content/update", siteContent);
+    }
+
+    private async Task ConfirmRemoveProject(Project project)
+    {
+        bool ok = await JS.InvokeAsync<bool>("confirm",
+            $"Are you sure you want to delete project “{project.Name}”?");
+        if (!ok) return;
+
+        siteContent.Projects.Remove(project);
+        // push update to server
+        await Http.PostAsJsonAsync("api/content/update", siteContent);
+        await LoadSiteContent();
     }
 
     // Initialization and utility methods
